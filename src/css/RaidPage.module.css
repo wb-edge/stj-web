@@ -1,0 +1,72 @@
+.raidContainer {
+    padding: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 25px;
+    border-left: 5px solid #5865F2; /* 디스코드 브랜드 컬러로 포인트 */
+    padding-left: 15px;
+}
+
+.tableWrapper {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.raidTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.raidTable th {
+    background-color: #f8f9fa;
+    padding: 15px;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #eee;
+}
+
+.raidTable td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+    vertical-align: middle;
+}
+
+.raidRow:hover {
+    background-color: #fcfcfc;
+}
+
+.raidName {
+    font-weight: bold;
+    color: #222;
+}
+
+.timeTag {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: #eef1ff;
+    color: #5865F2;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.leaderName {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* 데이터가 없을 때 표시 */
+.noData {
+    padding: 50px;
+    text-align: center;
+    color: #999;
+}
