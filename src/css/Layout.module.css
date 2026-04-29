@@ -1,0 +1,66 @@
+/* src/css/Layout.module.css */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.link {
+    text-decoration: none;
+    color: #3498db;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.link:hover {
+    color: #2980b9;
+}
+
+.adminLink {
+    color: #e74c3c;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #e74c3c;
+    border-radius: 4px;
+}
+
+.adminLink:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loginBtn {
+    background-color: #5865F2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.loginBtn:hover {
+    background-color: #4752c4;
+}
