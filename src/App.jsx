@@ -16,6 +16,7 @@ function App() {
             try {
                 const res = await userApi.getInfo();
                 // res.data.success가 true일 때만 유저 정보를 세팅
+                console.log(res);
                 if (res.data && res.data.success === true) {
                     setUser(res.data);
                 } else {
@@ -35,6 +36,10 @@ function App() {
 
     const handleLogin = () => {
         window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/discord`;
+    };
+
+    const handleLogout = () => {
+        window.location.href = `${import.meta.env.VITE_API_URL}/logout`;
     };
 
     if (loading) return <div className={layoutStyles.container}>데이터 로딩 중...</div>;
