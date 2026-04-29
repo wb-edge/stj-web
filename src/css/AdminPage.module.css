@@ -1,0 +1,81 @@
+/* src/css/AdminPage.module.css */
+.adminContainer {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    border-left: 5px solid #e74c3c;
+    padding-left: 15px;
+}
+
+.tableWrapper {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow-x: auto;
+}
+
+.userTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.userTable th {
+    background-color: #f8f9fa;
+    color: #555;
+    padding: 15px;
+    font-weight: 600;
+    border-bottom: 2px solid #eee;
+}
+
+.userTable td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.userRow:hover {
+    background-color: #fcfcfc;
+}
+
+.charInput {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 200px;
+    transition: border-color 0.2s;
+}
+
+.charInput:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.saveBtn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.saveBtn:hover {
+    background-color: #27ae60;
+}
+
+.loading {
+    text-align: center;
+    padding: 100px;
+    color: #666;
+}
