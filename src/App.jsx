@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { userApi } from './api';
 import AdminPage from './pages/AdminPage';
+import RaidPage from './pages/RaidPage';
 
 // CSS 모듈
 import layoutStyles from './css/Layout.module.css';
@@ -68,6 +69,12 @@ function App() {
             )
         },
         { 
+            path: "/raid", 
+            label: "레이드 일정", 
+            showInNav: true,
+            element: () => <RaidPage /> 
+        },
+        { 
             path: "/characters", 
             label: "보유 캐릭터", 
             showInNav: true,
@@ -117,7 +124,15 @@ function App() {
                 <main>
                     <Routes>
                         {routeConfig.map(route => (
-                            <Route key={route.path} path={route.path} element={route.element} />
+                            <Route 
+                                key={route.path} 
+                                path={route.path} 
+                                element={
+                                    typeof route.element === 'function' 
+                                    ? route.element(user, updateUser) // 함수면 인자 전달
+                                    : route.element // 아니면 바로 렌더링
+                                } 
+                            />
                         ))}
                     </Routes>
                 </main>
