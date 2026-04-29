@@ -4,7 +4,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE_URL = 'https://krds.bvs.co.kr:8880';
+  const API_BASE_URL = 'https://krds.bvs.co.kr:8880/stj-api';
 
   // 1. 로그인 상태 확인 (백엔드 API 호출)
   const checkLoginStatus = async () => {
