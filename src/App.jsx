@@ -4,11 +4,13 @@ function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const API_BASE_URL = 'https://krds.bvs.co.kr:8880';
+
   // 1. 로그인 상태 확인 (백엔드 API 호출)
   const checkLoginStatus = async () => {
     try {
       // credentials: 'include'는 세션 쿠키를 백엔드에 전달하기 위해 필수입니다.
-      const response = await fetch('http://121.138.169.203:8880/api/member/info', {
+      const response = await fetch(`${API_BASE_URL}/api/member/info`, {
         credentials: 'include' 
       });
 
@@ -33,7 +35,7 @@ function App() {
 
   // 2. 로그인 처리 (디스코드 OAuth2 엔드포인트로 이동)
   const handleLogin = () => {
-    window.location.href = 'http://121.138.169.203:8880/oauth2/authorization/discord';
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/discord`;
   };
 
   if (loading) return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
