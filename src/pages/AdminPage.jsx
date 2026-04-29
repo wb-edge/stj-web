@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../api';
-import styles from '../css/AdminPage.module.css'; // 수정된 경로
+import styles from '../css/AdminPage.module.css';
 
-const AdminPage = () => {
+const AdminPage = ({ onUserUpdate, currentUser }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -12,17 +12,26 @@ const AdminPage = () => {
             setUsers(res.data);
             setLoading(false);
         } catch (err) {
+            console.error(err);
             alert("관리자 권한이 없거나 불러오기에 실패했습니다.");
         }
     };
 
-    useEffect(() => { fetchUsers(); }, []);
+    useEffect(() => { 
+        fetchUsers(); 
+    }, []);
 
     const handleSaveCharacter = async (discordId, characterName) => {
         try {
             await adminApi.updateCharacter(discordId, characterName);
             alert("성공적으로 저장되었습니다.");
-            fetchUsers(); 
+            
+            // 💡 현재 수정한 유저가 로그인한 본인인 경우 App.jsx의 상태도 동기화
+            if (currentUser && currentUser.discordId === discordId) {
+                onUserUpdate({ mainCharacterName: characterName });
+            }
+            
+            fetchUsers(); // 목록 새로고침
         } catch (err) {
             alert("저장 실패");
         }
@@ -58,6 +67,11 @@ const AdminPage = () => {
 const UserRow = ({ user, onSave }) => {
     const [charName, setCharName] = useState(user.mainCharacterName || "");
 
+    // 유저 데이터가 바뀔 때(fetchUsers 결과 등) input 값도 동기화
+    useEffect(() => {
+        setCharName(user.mainCharacterName || "");
+    }, [user.mainCharacterName]);
+
     return (
         <tr className={styles.userRow}>
             <td><strong>{user.username}</strong></td>
@@ -71,7 +85,7 @@ const UserRow = ({ user, onSave }) => {
                     placeholder="캐릭터명 입력"
                 />
             </td>
-            <td>{new Date(user.lastLoginAt).toLocaleString()}</td>
+            <td>{user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : "-"}</td>
             <td>
                 <button className={styles.saveBtn} onClick={() => onSave(user.discordId, charName)}>
                     저장
