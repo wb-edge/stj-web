@@ -21,3 +21,44 @@
 
 /* 8인 파티일 때 5번부터는 색상을 살짝 다르게 해서 파티 구분 느낌 주기 */
 .memberGrid8 .memberSlot:nth-child(n+5) { background-color: #f0f4ff; }
+
+/* 기존 스타일 유지하면서 난이도 버튼 추가 */
+
+.diffRow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 10px;
+    background-color: #fcfcfc;
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+}
+
+.diffBtn {
+    padding: 6px 15px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #888;
+    transition: 0.2s;
+}
+
+.diffBtn:hover {
+    border-color: #5865F2;
+    color: #5865F2;
+}
+
+.activeDiff {
+    background: #5865F2;
+    color: white;
+    border-color: #5865F2;
+}
+
+/* 8인 그리드 시각적 보완 */
+.memberGrid8 .memberSlot:nth-child(n+5) {
+    background-color: #f4f6ff;
+    border-color: #e0e6ff;
+}
