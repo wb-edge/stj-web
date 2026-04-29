@@ -45,7 +45,7 @@ function App() {
     if (loading) return <div className={layoutStyles.container}>데이터 로딩 중...</div>;
 
     return (
-        <Router>
+        <Router basename="/stj-web">
             <div className={layoutStyles.container}>
                 {/* 상단 헤더 레이아웃 */}
                 <header className={layoutStyles.header}>
