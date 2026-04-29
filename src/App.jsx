@@ -15,10 +15,17 @@ function App() {
         const initAuth = async () => {
             try {
                 const res = await userApi.getInfo();
-                setUser(res.data);
+                // res.data.success가 true일 때만 유저 정보를 세팅
+                if (res.data && res.data.success === true) {
+                    setUser(res.data);
+                } else {
+                    // 서버가 success: false를 주면 확실하게 null로 비움
+                    console.log("세션 만료 또는 로그인 필요");
+                    setUser(null);
+                }
             } catch (err) {
-                console.log("로그인 정보 없음");
-                setUser(null);
+                console.error("인증 체크 실패:", err);
+                setUser(null); // 에러 발생 시(401, 500 등)에도 로그아웃 상태로 간주
             } finally {
                 setLoading(false);
             }
@@ -45,14 +52,17 @@ function App() {
                     </nav>
                     
                     <div className={layoutStyles.userInfo}>
-                        {user ? (
-                            <span><b>{user.username}</b>님 환영합니다!</span>
-                        ) : (
-                            <button className={layoutStyles.loginBtn} onClick={handleLogin}>
-                                디스코드 로그인
-                            </button>
-                        )}
-                    </div>
+                      {user && user.success ? (
+                          <>
+                              <span><b>{user.discord?.global_name || user.discord?.username}</b>님 환영합니다!</span>
+                              <button onClick={handleLogout}>로그아웃</button>
+                          </>
+                      ) : (
+                          <button className={layoutStyles.loginBtn} onClick={handleLogin}>
+                              디스코드 로그인
+                          </button>
+                      )}
+                  </div>
                 </header>
 
                 {/* 메인 콘텐츠 영역 */}
