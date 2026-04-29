@@ -1,48 +1,97 @@
-.raidContainer { padding: 30px; max-width: 1200px; margin: 0 auto; }
-.title { font-size: 1.8rem; color: #333; margin-bottom: 25px; border-left: 5px solid #5865F2; padding-left: 15px; }
+/* src/css/RaidPage.module.css */
 
-/* 탭 스타일 */
-.categoryTabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-.tabBtn { padding: 10px 20px; border: none; background: none; font-size: 1rem; cursor: pointer; color: #666; transition: 0.2s; }
-.activeTab { color: #5865F2; font-weight: bold; border-bottom: 3px solid #5865F2; }
+.raidContainer {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-/* 파티 카드 스타일 */
-.partyGrid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-.partyCard { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eee; }
-.partyTitle { font-size: 1.1rem; margin-bottom: 15px; color: #222; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+.title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 25px;
+    border-left: 5px solid #5865F2;
+    padding-left: 15px;
+}
 
-/* 멤버 그리드 (중요!) */
-.memberGrid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.memberGrid8 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; } /* 4열 2행 자동 배치 */
+/* 1단계: 메인 카테고리 탭 (상단 바 형태) */
+.mainTabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    background: #f0f0f0;
+    padding: 6px;
+    border-radius: 10px;
+}
 
-.memberSlot { background: #f9f9f9; padding: 12px; border-radius: 8px; display: flex; align-items: center; gap: 10px; border: 1px solid #f0f0f0; }
-.slotNum { font-size: 0.75rem; color: #999; font-weight: bold; }
-.memberName { font-size: 0.95rem; color: #333; font-weight: 500; }
+.mainTabBtn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #666;
+    transition: all 0.2s ease;
+}
 
-/* 8인 파티일 때 5번부터는 색상을 살짝 다르게 해서 파티 구분 느낌 주기 */
-.memberGrid8 .memberSlot:nth-child(n+5) { background-color: #f0f4ff; }
+.activeMain {
+    background: white;
+    color: #5865F2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-/* 기존 스타일 유지하면서 난이도 버튼 추가 */
+/* 2단계: 상세 레이드 버튼 (둥근 버튼 형태) */
+.subCategoryRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
+.subBtn {
+    padding: 8px 18px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #555;
+    transition: all 0.2s;
+}
+
+.subBtn:hover {
+    border-color: #5865F2;
+    color: #5865F2;
+}
+
+.activeSub {
+    background: #5865F2;
+    color: white;
+    border-color: #5865F2;
+}
+
+/* 3단계: 난이도 선택 버튼 (작은 사각형 형태) */
 .diffRow {
     display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-    padding: 10px;
-    background-color: #fcfcfc;
-    border-radius: 10px;
-    border: 1px solid #f0f0f0;
+    gap: 8px;
+    margin-bottom: 30px;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
 }
 
 .diffBtn {
-    padding: 6px 15px;
-    border: 1px solid #ddd;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
     background: white;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #888;
+    color: #777;
     transition: 0.2s;
 }
 
@@ -52,13 +101,83 @@
 }
 
 .activeDiff {
-    background: #5865F2;
+    background: #444;
     color: white;
-    border-color: #5865F2;
+    border-color: #444;
 }
 
-/* 8인 그리드 시각적 보완 */
+/* 파티 카드 레이아웃 */
+.partyGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+
+.partyCard {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eee;
+}
+
+.partyTitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #222;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 12px;
+}
+
+/* 멤버 그리드 (4인 / 8인 공통 4열 배치) */
+.memberGrid4, .memberGrid8 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.memberSlot {
+    background: #fdfdfd;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s;
+}
+
+.memberSlot:hover {
+    transform: translateY(-2px);
+    border-color: #ddd;
+}
+
+.slotNum {
+    font-size: 0.7rem;
+    color: #bbb;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.memberName {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* 8인 파티일 때 2파티(5~8번) 시각적 구분 */
 .memberGrid8 .memberSlot:nth-child(n+5) {
-    background-color: #f4f6ff;
-    border-color: #e0e6ff;
+    background-color: #f4f7ff;
+    border-color: #e2e8ff;
+}
+
+/* 데이터 없음 알림 */
+.noData {
+    text-align: center;
+    padding: 60px;
+    color: #aaa;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 2px dashed #eee;
+    font-size: 1.1rem;
 }
