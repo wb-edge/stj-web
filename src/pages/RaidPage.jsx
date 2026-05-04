@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = () => {
-    // 카테고리 순서 변경 적용
+    // 최고 관리자 여부 상태 (실제 권한에 맞게 연동하시면 됩니다)
+    const [isAdmin, setIsAdmin] = useState(true);
+
+    // 카테고리 데이터 구조 (3단계 필터링용)
     const raidData = [
         { 
             id: 'abyss', 
@@ -51,6 +54,7 @@ const RaidPage = () => {
         setActiveDiff(currentSub.difficulties[0]);
     };
 
+    // 임시 파티 데이터
     const partyList = [
         { 
             id: 1, 
@@ -114,20 +118,40 @@ const RaidPage = () => {
                         <div key={party.id} className={styles.partyCard}>
                             <div className={currentMainInfo.size === 8 ? styles.memberGrid8 : styles.memberGrid4}>
                                 {party.members.map((member, idx) => {
-                                    // 딜러/서포터 고정 위치 판정 (4인: 4번째 칸, 8인: 7, 8번째 칸)
                                     let isSupport = false;
                                     if (currentMainInfo.size === 4 && idx === 3) {
                                         isSupport = true;
                                     } else if (currentMainInfo.size === 8 && idx >= 6) {
                                         isSupport = true;
                                     }
+                                    
+                                    const isOccupied = member !== '비어있음';
 
                                     return (
                                         <div 
                                             key={idx} 
-                                            className={`${styles.memberSlot} ${isSupport ? styles.supportSlot : styles.dealerSlot}`}
+                                            className={`${styles.memberSlot} ${isOccupied ? (isSupport ? styles.supportSlot : styles.dealerSlot) : styles.emptySlot}`}
                                         >
-                                            <span className={styles.memberName}>{member}</span>
+                                            {/* 왼쪽 아이콘 */}
+                                            <span className={styles.leftIcon}>
+                                                {isOccupied ? (isSupport ? '✨' : '⚔️') : '⚪'}
+                                            </span>
+
+                                            {/* 이름 */}
+                                            <span className={styles.memberName}>{member !== '비어있음' ? member : ''}</span>
+
+                                            {/* 오른쪽 액션 버튼 (삭제 / 추가) */}
+                                            {isOccupied ? (
+                                                isAdmin && (
+                                                    <button className={styles.actionBtn} onClick={() => alert('파티원 삭제') }>
+                                                        -
+                                                    </button>
+                                                )
+                                            ) : (
+                                                <button className={styles.actionBtn} onClick={() => alert('파티원 추가') }>
+                                                    +
+                                                </button>
+                                            )}
                                         </div>
                                     );
                                 })}
