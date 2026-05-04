@@ -66,7 +66,7 @@ function App() {
         { 
             path: "/my-raid", 
             label: "내 레이드", 
-            showInNav: true, // 로그인 여부에 따라 노출 조절 가능
+            showInNav: true,
             element: <MyRaidPage /> 
         },
         { path: "/characters", label: "보유 캐릭터", showInNav: true, element: <div>준비 중</div> },

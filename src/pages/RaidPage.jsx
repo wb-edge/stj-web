@@ -2,20 +2,8 @@ import React, { useState } from 'react';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = () => {
-    // 레이드 데이터 구조 (3단계 필터링용)
+    // 카테고리 순서 변경 적용
     const raidData = [
-        { 
-            id: 'kazeros', 
-            label: '카제로스 레이드', 
-            size: 8,
-            subCategories: [
-                { id: 'kaz-final', label: '종막 : 카제로스', difficulties: ['하드', '노말'] },
-                { id: 'kaz-4', label: '4막 : 아르모체', difficulties: ['하드', '노말'] },
-                { id: 'kaz-3', label: '3막 : 모르둠', difficulties: ['하드', '노말'] },
-                { id: 'kaz-2', label: '2막 : 아브렐슈드', difficulties: ['하드', '노말'] },
-                { id: 'kaz-1', label: '1막 : 에기르', difficulties: ['하드', '노말'] },
-            ]
-        },
         { 
             id: 'abyss', 
             label: '어비스 던전', 
@@ -31,14 +19,25 @@ const RaidPage = () => {
             subCategories: [
                 { id: 'shadow-boss', label: '고통의 마녀 : 세르카', difficulties: ['나이트메어', '하드', '노말'] },
             ]
+        },
+        { 
+            id: 'kazeros', 
+            label: '카제로스 레이드', 
+            size: 8,
+            subCategories: [
+                { id: 'kaz-final', label: '종막 : 카제로스', difficulties: ['하드', '노말'] },
+                { id: 'kaz-4', label: '4막 : 아르모체', difficulties: ['하드', '노말'] },
+                { id: 'kaz-3', label: '3막 : 모르둠', difficulties: ['하드', '노말'] },
+                { id: 'kaz-2', label: '2막 : 아브렐슈드', difficulties: ['하드', '노말'] },
+                { id: 'kaz-1', label: '1막 : 에기르', difficulties: ['하드', '노말'] },
+            ]
         }
     ];
 
-    const [activeMain, setActiveMain] = useState('kazeros');
-    const [activeSub, setActiveSub] = useState('kaz-1');
-    const [activeDiff, setActiveDiff] = useState('하드');
+    const [activeMain, setActiveMain] = useState('abyss');
+    const [activeSub, setActiveSub] = useState('church');
+    const [activeDiff, setActiveDiff] = useState('3단계');
 
-    // 메인 카테고리 변경 시 서브와 난이도 초기화
     const handleMainChange = (mainId) => {
         setActiveMain(mainId);
         const firstSub = raidData.find(d => d.id === mainId).subCategories[0];
@@ -46,21 +45,18 @@ const RaidPage = () => {
         setActiveDiff(firstSub.difficulties[0]);
     };
 
-    // 서브 카테고리 변경 시 난이도 초기화
     const handleSubChange = (subId) => {
         setActiveSub(subId);
         const currentSub = raidData.find(d => d.id === activeMain).subCategories.find(s => s.id === subId);
         setActiveDiff(currentSub.difficulties[0]);
     };
 
-    // 임시 파티 데이터 (실제 데이터와 매칭될 식별값: subId + diff)
     const partyList = [
         { 
             id: 1, 
-            subId: 'kaz-1', 
-            diff: '하드',
-            title: '1막 하드 고정대 (수요일 21:00)', 
-            members: ['크림슨엣지', '길드원A', '길드원B', '길드원C', '길드원D', '길드원E', '길드원F', '비어있음'] 
+            subId: 'church', 
+            diff: '3단계',
+            members: ['크림슨엣지', '길드원A', '길드원B', '비어있음'] 
         }
     ];
 
@@ -116,14 +112,25 @@ const RaidPage = () => {
                 {currentParties.length > 0 ? (
                     currentParties.map(party => (
                         <div key={party.id} className={styles.partyCard}>
-                            <h3 className={styles.partyTitle}>{party.title}</h3>
                             <div className={currentMainInfo.size === 8 ? styles.memberGrid8 : styles.memberGrid4}>
-                                {party.members.map((member, idx) => (
-                                    <div key={idx} className={styles.memberSlot}>
-                                        <span className={styles.slotNum}>{idx + 1}</span>
-                                        <span className={styles.memberName}>{member}</span>
-                                    </div>
-                                ))}
+                                {party.members.map((member, idx) => {
+                                    // 딜러/서포터 고정 위치 판정 (4인: 4번째 칸, 8인: 7, 8번째 칸)
+                                    let isSupport = false;
+                                    if (currentMainInfo.size === 4 && idx === 3) {
+                                        isSupport = true;
+                                    } else if (currentMainInfo.size === 8 && idx >= 6) {
+                                        isSupport = true;
+                                    }
+
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            className={`${styles.memberSlot} ${isSupport ? styles.supportSlot : styles.dealerSlot}`}
+                                        >
+                                            <span className={styles.memberName}>{member}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     ))
