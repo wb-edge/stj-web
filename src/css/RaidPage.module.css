@@ -1,36 +1,36 @@
 /* src/css/RaidPage.module.css */
 
 .raidContainer {
-    padding: 30px;
+    padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: #333;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     border-left: 5px solid #5865F2;
-    padding-left: 15px;
+    padding-left: 10px;
 }
 
-/* 1단계: 메인 카테고리 탭 (상단 바 형태) */
+/* 1단계: 메인 카테고리 탭 */
 .mainTabs {
     display: flex;
-    gap: 5px;
-    margin-bottom: 20px;
+    gap: 4px;
+    margin-bottom: 15px;
     background: #f0f0f0;
-    padding: 6px;
-    border-radius: 10px;
+    padding: 4px;
+    border-radius: 8px;
 }
 
 .mainTabBtn {
     flex: 1;
-    padding: 12px;
+    padding: 10px;
     border: none;
     background: none;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: bold;
     color: #666;
     transition: all 0.2s ease;
@@ -39,24 +39,24 @@
 .activeMain {
     background: white;
     color: #5865F2;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-/* 2단계: 상세 레이드 버튼 (둥근 버튼 형태) */
+/* 2단계: 상세 레이드 버튼 */
 .subCategoryRow {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 15px;
 }
 
 .subBtn {
-    padding: 8px 18px;
+    padding: 6px 12px;
     border: 1px solid #ddd;
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #555;
     transition: all 0.2s;
 }
@@ -72,24 +72,24 @@
     border-color: #5865F2;
 }
 
-/* 3단계: 난이도 선택 버튼 (작은 사각형 형태) */
+/* 3단계: 난이도 선택 버튼 */
 .diffRow {
     display: flex;
-    gap: 8px;
-    margin-bottom: 30px;
-    padding: 12px;
+    gap: 6px;
+    margin-bottom: 15px;
+    padding: 8px 10px;
     background-color: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid #eee;
 }
 
 .diffBtn {
-    padding: 6px 14px;
+    padding: 4px 10px;
     border: 1px solid #ccc;
     background: white;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #777;
     transition: 0.2s;
@@ -110,62 +110,61 @@
 .partyGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 25px;
+    gap: 15px;
 }
 
 .partyCard {
     background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
     border: 1px solid #eee;
 }
 
 .partyTitle {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+    font-size: 1.05rem;
+    margin-bottom: 12px;
     color: #222;
-    border-bottom: 2px solid #f8f9fa;
-    padding-bottom: 12px;
+    border-bottom: 1px solid #f8f9fa;
+    padding-bottom: 8px;
 }
 
-/* 멤버 그리드 (4인 / 8인 공통 4열 배치) */
+/* 멤버 그리드 */
 .memberGrid4, .memberGrid8 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 8px;
 }
 
 .memberSlot {
     background: #fdfdfd;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
     border: 1px solid #f0f0f0;
-    transition: transform 0.2s;
+    transition: transform 0.1s ease;
 }
 
 .memberSlot:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color: #ddd;
 }
 
 .slotNum {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: #bbb;
     font-weight: bold;
-    text-transform: uppercase;
 }
 
 .memberName {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: #333;
     font-weight: 600;
 }
 
-/* 8인 파티일 때 2파티(5~8번) 시각적 구분 */
+/* 8인 파티일 때 구분 */
 .memberGrid8 .memberSlot:nth-child(n+5) {
     background-color: #f4f7ff;
     border-color: #e2e8ff;
@@ -174,10 +173,10 @@
 /* 데이터 없음 알림 */
 .noData {
     text-align: center;
-    padding: 60px;
+    padding: 40px;
     color: #aaa;
     background: #fafafa;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 2px dashed #eee;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { userApi } from './api';
 import AdminPage from './pages/AdminPage';
 import RaidPage from './pages/RaidPage';
+import MyRaidPage from './pages/MyRaidPage';
 
 import layoutStyles from './css/Layout.module.css';
 import homeStyles from './css/Home.module.css';
@@ -62,6 +63,12 @@ function App() {
     const routeConfig = [
         { path: "/", label: "홈", showInNav: true, element: <HomeContent /> },
         { path: "/raid", label: "레이드 일정", showInNav: true, element: <RaidPage /> },
+        { 
+            path: "/my-raid", 
+            label: "내 레이드", 
+            showInNav: true, // 로그인 여부에 따라 노출 조절 가능
+            element: <MyRaidPage /> 
+        },
         { path: "/characters", label: "보유 캐릭터", showInNav: true, element: <div>준비 중</div> },
         { 
             path: "/admin", 
