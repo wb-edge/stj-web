@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = () => {
-    // 1. 레이드 데이터 구조 (난이도 포함)
+    // 레이드 데이터 구조 (3단계 필터링용)
     const raidData = [
         { 
             id: 'kazeros', 
@@ -38,7 +38,7 @@ const RaidPage = () => {
     const [activeSub, setActiveSub] = useState('kaz-1');
     const [activeDiff, setActiveDiff] = useState('하드');
 
-    // 메인 변경 시 서브/난이도 초기화
+    // 메인 카테고리 변경 시 서브와 난이도 초기화
     const handleMainChange = (mainId) => {
         setActiveMain(mainId);
         const firstSub = raidData.find(d => d.id === mainId).subCategories[0];
@@ -46,20 +46,20 @@ const RaidPage = () => {
         setActiveDiff(firstSub.difficulties[0]);
     };
 
-    // 서브 변경 시 난이도 초기화
+    // 서브 카테고리 변경 시 난이도 초기화
     const handleSubChange = (subId) => {
         setActiveSub(subId);
         const currentSub = raidData.find(d => d.id === activeMain).subCategories.find(s => s.id === subId);
         setActiveDiff(currentSub.difficulties[0]);
     };
 
-    // 임시 파티 데이터 (실제 데이터와 매칭될 식별값: subId + activeDiff)
+    // 임시 파티 데이터 (실제 데이터와 매칭될 식별값: subId + diff)
     const partyList = [
         { 
             id: 1, 
             subId: 'kaz-1', 
             diff: '하드',
-            title: '1막 하드 고정 (수요일 21:00)', 
+            title: '1막 하드 고정대 (수요일 21:00)', 
             members: ['크림슨엣지', '길드원A', '길드원B', '길드원C', '길드원D', '길드원E', '길드원F', '비어있음'] 
         }
     ];
@@ -72,7 +72,7 @@ const RaidPage = () => {
         <div className={styles.raidContainer}>
             <h2 className={styles.title}>📅 레이드 고정공대 일정</h2>
 
-            {/* 1단계: 레이드 종류 */}
+            {/* 1단계: 레이드 종류 탭 */}
             <div className={styles.mainTabs}>
                 {raidData.map(main => (
                     <button 
@@ -85,7 +85,7 @@ const RaidPage = () => {
                 ))}
             </div>
 
-            {/* 2단계: 상세 레이드 명칭 */}
+            {/* 2단계: 상세 레이드 명칭 버튼 */}
             <div className={styles.subCategoryRow}>
                 {currentMainInfo.subCategories.map(sub => (
                     <button
@@ -98,7 +98,7 @@ const RaidPage = () => {
                 ))}
             </div>
 
-            {/* 3단계: 난이도 선택 */}
+            {/* 3단계: 난이도 선택 버튼 */}
             <div className={styles.diffRow}>
                 {currentSubInfo.difficulties.map(diff => (
                     <button
@@ -111,7 +111,7 @@ const RaidPage = () => {
                 ))}
             </div>
 
-            {/* 최종 파티 리스트 */}
+            {/* 파티 리스트 영역 */}
             <div className={styles.partyGrid}>
                 {currentParties.length > 0 ? (
                     currentParties.map(party => (
@@ -129,7 +129,7 @@ const RaidPage = () => {
                     ))
                 ) : (
                     <div className={styles.noData}>
-                        <strong>{currentSubInfo.label} [{activeDiff}]</strong> 난이도에 등록된 파티가 없습니다.
+                        <strong>{currentSubInfo.label} [{activeDiff}]</strong>에 등록된 파티가 없습니다.
                     </div>
                 )}
             </div>
