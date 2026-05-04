@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = () => {
-    // 최고 관리자 여부 상태 (실제 권한에 맞게 연동하시면 됩니다)
+    // 최고 관리자 여부 상태 (실제 권한에 맞게 로그인 정보 등에서 가져오시면 됩니다)
     const [isAdmin, setIsAdmin] = useState(true);
 
-    // 카테고리 데이터 구조 (3단계 필터링용)
+    // 카테고리 데이터 구조
     const raidData = [
         { 
             id: 'abyss', 
@@ -41,6 +41,16 @@ const RaidPage = () => {
     const [activeSub, setActiveSub] = useState('church');
     const [activeDiff, setActiveDiff] = useState('3단계');
 
+    // 파티 상태(파티 목록 데이터)
+    const [partyList, setPartyList] = useState([
+        { 
+            id: 1, 
+            subId: 'church', 
+            diff: '3단계',
+            members: ['크림슨엣지', '길드원A', '길드원B', '비어있음'] 
+        }
+    ]);
+
     const handleMainChange = (mainId) => {
         setActiveMain(mainId);
         const firstSub = raidData.find(d => d.id === mainId).subCategories[0];
@@ -54,15 +64,48 @@ const RaidPage = () => {
         setActiveDiff(currentSub.difficulties[0]);
     };
 
-    // 임시 파티 데이터
-    const partyList = [
-        { 
-            id: 1, 
-            subId: 'church', 
-            diff: '3단계',
-            members: ['크림슨엣지', '길드원A', '길드원B', '비어있음'] 
+    // 캐릭터 등록 API 호출 및 파티원 추가
+    const handleRegister = async (partyId, slotIndex) => {
+        const characterName = prompt("등록할 로스트아크 캐릭터명을 입력하세요:");
+        if (!characterName) return;
+
+        try {
+            // [예시] 실제 API 호출 시 주석 해제하여 사용
+            // const response = await raidApi.searchCharacter(characterName);
+            // const charData = response.data;
+            
+            // 임시 데이터 업데이트 로직
+            setPartyList(prevList => 
+                prevList.map(p => {
+                    if (p.id === partyId) {
+                        const newMembers = [...p.members];
+                        newMembers[slotIndex] = characterName; // 검색된 캐릭터명으로 교체
+                        return { ...p, members: newMembers };
+                    }
+                    return p;
+                })
+            );
+            alert(`${characterName} 캐릭터가 파티에 등록되었습니다.`);
+        } catch (err) {
+            alert("캐릭터 조회 및 등록에 실패했습니다.");
         }
-    ];
+    };
+
+    // 파티원 삭제 기능
+    const handleDelete = (partyId, slotIndex) => {
+        if (!window.confirm("해당 파티원을 삭제하시겠습니까?")) return;
+
+        setPartyList(prevList => 
+            prevList.map(p => {
+                if (p.id === partyId) {
+                    const newMembers = [...p.members];
+                    newMembers[slotIndex] = '비어있음';
+                    return { ...p, members: newMembers };
+                }
+                return p;
+            })
+        );
+    };
 
     const currentMainInfo = raidData.find(d => d.id === activeMain);
     const currentSubInfo = currentMainInfo.subCategories.find(s => s.id === activeSub);
@@ -132,25 +175,33 @@ const RaidPage = () => {
                                             key={idx} 
                                             className={`${styles.memberSlot} ${isOccupied ? (isSupport ? styles.supportSlot : styles.dealerSlot) : styles.emptySlot}`}
                                         >
-                                            {/* 왼쪽 아이콘 */}
+                                            {/* 좌측 직업군 아이콘 영역 */}
                                             <span className={styles.leftIcon}>
                                                 {isOccupied ? (isSupport ? '✨' : '⚔️') : '⚪'}
                                             </span>
 
-                                            {/* 이름 */}
-                                            <span className={styles.memberName}>{member !== '비어있음' ? member : ''}</span>
+                                            {/* 파티원 이름 또는 빈칸 */}
+                                            <span className={styles.memberName}>
+                                                {isOccupied ? member : ''}
+                                            </span>
 
-                                            {/* 오른쪽 액션 버튼 (삭제 / 추가) */}
-                                            {isOccupied ? (
-                                                isAdmin && (
-                                                    <button className={styles.actionBtn} onClick={() => alert('파티원 삭제') }>
+                                            {/* 관리자 권한일 때만 등록/삭제 버튼 노출 */}
+                                            {isAdmin && (
+                                                isOccupied ? (
+                                                    <button 
+                                                        className={styles.actionBtn} 
+                                                        onClick={() => handleDelete(party.id, idx)}
+                                                    >
                                                         -
                                                     </button>
+                                                ) : (
+                                                    <button 
+                                                        className={styles.actionBtn} 
+                                                        onClick={() => handleRegister(party.id, idx)}
+                                                    >
+                                                        +
+                                                    </button>
                                                 )
-                                            ) : (
-                                                <button className={styles.actionBtn} onClick={() => alert('파티원 추가') }>
-                                                    +
-                                                </button>
                                             )}
                                         </div>
                                     );
