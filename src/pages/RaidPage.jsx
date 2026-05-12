@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = ({ user }) => {
-    // 최고관리자 여부 (관리자 계정인 경우에만 버튼 노출)
+    // 최고관리자 여부 확인 (테스트를 위해 기본값 true 설정 가능)
     const isAdmin = user?.isAdmin || true; 
 
+    // 1. 레이드 카테고리 데이터 구조 (순서: 어비스 -> 그림자 -> 카제로스)
     const raidData = [
         { 
             id: 'abyss', 
@@ -36,57 +37,62 @@ const RaidPage = ({ user }) => {
         }
     ];
 
+    // 2. 상태 관리 (필터 및 파티 데이터)
     const [activeMain, setActiveMain] = useState('abyss');
     const [activeSub, setActiveSub] = useState('church');
     const [activeDiff, setActiveDiff] = useState('3단계');
-    const [partyList, setPartyList] = useState([]);
+    const [partyList, setPartyList] = useState([]); // 실제 DB 연동 전 임시 상태
 
-    // 1. 새 파티 생성 (DB 등록 로직)
-    const handleCreateParty = async () => {
+    // 3. 필터 변경 핸들러
+    const handleMainChange = (mainId) => {
+        setActiveMain(mainId);
+        const firstSub = raidData.find(d => d.id === mainId).subCategories[0];
+        setActiveSub(firstSub.id);
+        setActiveDiff(firstSub.difficulties[0]);
+    };
+
+    const handleSubChange = (subId) => {
+        setActiveSub(subId);
+        const currentSub = raidData.find(d => d.id === activeMain).subCategories.find(s => s.id === subId);
+        setActiveDiff(currentSub.difficulties[0]);
+    };
+
+    // 4. [관리자 전용] 파티 생성/등록/삭제 함수
+    const handleCreateParty = () => {
         const currentMain = raidData.find(d => d.id === activeMain);
-        
-        // DB에 저장될 파티 객체 구조
         const newParty = {
-            raid_type: activeMain,      // shadow
-            raid_name: activeSub,      // serca
-            difficulty: activeDiff,    // 나이트메어
+            id: Date.now(),
+            raid_name: activeSub,
+            difficulty: activeDiff,
             max_size: currentMain.size,
             members: Array(currentMain.size).fill("비어있음")
         };
-
-        if (!window.confirm(`[${activeDiff}] 난이도 파티를 생성하시겠습니까?`)) return;
-
-        try {
-            // 여기에 실제 API 호출 코드가 들어갑니다.
-            // await axios.post('/api/raids/party', newParty);
-            
-            // 임시 클라이언트 반영
-            setPartyList([...partyList, { ...newParty, id: Date.now() }]);
-        } catch (err) {
-            alert("파티 생성 실패");
-        }
+        setPartyList([...partyList, newParty]);
     };
 
-    // 2. 파티원 캐릭터 검색 및 등록
-    const handleRegisterMember = async (partyId, slotIdx) => {
-        const charName = prompt("캐릭터명을 입력하세요.");
+    const handleRegisterMember = (partyId, slotIdx) => {
+        const charName = prompt("등록할 캐릭터명을 입력하세요.");
         if (!charName) return;
+        setPartyList(prev => prev.map(p => {
+            if (p.id === partyId) {
+                const newMembers = [...p.members];
+                newMembers[slotIdx] = charName;
+                return { ...p, members: newMembers };
+            }
+            return p;
+        }));
+    };
 
-        try {
-            // 로스트아크 API 연동 시 이 부분에서 캐릭터 검색 수행
-            // const res = await axios.get(`/api/loarc/search?name=${charName}`);
-            
-            setPartyList(prev => prev.map(p => {
-                if (p.id === partyId) {
-                    const newMembers = [...p.members];
-                    newMembers[slotIdx] = charName;
-                    return { ...p, members: newMembers };
-                }
-                return p;
-            }));
-        } catch (err) {
-            alert("캐릭터 정보를 불러올 수 없습니다.");
-        }
+    const handleDeleteMember = (partyId, slotIdx) => {
+        if (!window.confirm("슬롯을 비우시겠습니까?")) return;
+        setPartyList(prev => prev.map(p => {
+            if (p.id === partyId) {
+                const newMembers = [...p.members];
+                newMembers[slotIdx] = "비어있음";
+                return { ...p, members: newMembers };
+            }
+            return p;
+        }));
     };
 
     const currentMainInfo = raidData.find(d => d.id === activeMain);
@@ -95,6 +101,7 @@ const RaidPage = ({ user }) => {
 
     return (
         <div className={styles.raidContainer}>
+            {/* 타이틀 및 파티 생성 버튼 */}
             <div className={styles.headerRow}>
                 <h2 className={styles.title}>📅 레이드 고정공대 일정</h2>
                 {isAdmin && (
@@ -104,8 +111,46 @@ const RaidPage = ({ user }) => {
                 )}
             </div>
 
-            {/* 필터 탭/버튼 생략 (기존 로직과 동일) */}
+            {/* 1단계: 메인 카테고리 탭 */}
+            <div className={styles.mainTabs}>
+                {raidData.map(main => (
+                    <button 
+                        key={main.id}
+                        className={`${styles.mainTabBtn} ${activeMain === main.id ? styles.activeMain : ''}`}
+                        onClick={() => handleMainChange(main.id)}
+                    >
+                        {main.label}
+                    </button>
+                ))}
+            </div>
 
+            {/* 2단계: 상세 레이드 버튼 */}
+            <div className={styles.subCategoryRow}>
+                {currentMainInfo.subCategories.map(sub => (
+                    <button
+                        key={sub.id}
+                        className={`${styles.subBtn} ${activeSub === sub.id ? styles.activeSub : ''}`}
+                        onClick={() => handleSubChange(sub.id)}
+                    >
+                        {sub.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* 3단계: 난이도 버튼 */}
+            <div className={styles.diffRow}>
+                {currentSubInfo.difficulties.map(diff => (
+                    <button
+                        key={diff}
+                        className={`${styles.diffBtn} ${activeDiff === diff ? styles.activeDiff : ''}`}
+                        onClick={() => setActiveDiff(diff)}
+                    >
+                        {diff}
+                    </button>
+                ))}
+            </div>
+
+            {/* 4단계: 파티 리스트 테이블 (그리드) */}
             <div className={styles.partyGrid}>
                 {filteredParties.length > 0 ? (
                     filteredParties.map(party => (
@@ -134,7 +179,7 @@ const RaidPage = ({ user }) => {
                         </div>
                     ))
                 ) : (
-                    <div className={styles.noData}>생성된 파티가 없습니다.</div>
+                    <div className={styles.noData}>해당 조건에 생성된 파티가 없습니다.</div>
                 )}
             </div>
         </div>
