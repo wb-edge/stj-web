@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { userApi } from './api';
 import AdminPage from './pages/AdminPage';
 import RaidPage from './pages/RaidPage';
@@ -81,7 +81,7 @@ function App() {
     if (loading) return <div className={layoutStyles.container}>데이터 로딩 중...</div>;
 
     return (
-        <Router basename="/stj-web">
+        <Router>
             <div className={layoutStyles.container}>
                 <header className={layoutStyles.header}>
                     <nav className={layoutStyles.nav}>
