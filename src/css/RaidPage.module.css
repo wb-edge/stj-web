@@ -221,3 +221,26 @@
     border: 2px dashed #eee;
     font-size: 0.9rem;
 }
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.createBtn {
+    background-color: #5865F2;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.createBtn:hover {
+    background-color: #4752c4;
+}
