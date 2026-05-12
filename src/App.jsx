@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { userApi } from './api';
 import AdminPage from './pages/AdminPage';
@@ -8,12 +8,28 @@ import MyRaidPage from './pages/MyRaidPage';
 import layoutStyles from './css/Layout.module.css';
 import homeStyles from './css/Home.module.css';
 
+// ✅ 1. HomeContent를 App 함수 외부로 이동
+const HomeContent = ({ user }) => {
+    return (
+        <div className={homeStyles.content}>
+            <h2 className={homeStyles.title}>STJ 프로젝트 메인</h2>
+            {user && user.success ? (
+                <div className={homeStyles.charBox}>
+                    대표 캐릭터: <strong>{user.mainCharacterName || "미설정"}</strong>
+                </div>
+            ) : (
+                <p>서비스를 이용하려면 로그인이 필요합니다.</p>
+            )}
+        </div>
+    );
+};
+
 function App() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // 🔄 유저 정보를 서버로부터 가져오는 함수
-    const fetchUserInfo = async () => {
+    // 🔄 유저 정보를 가져오는 함수 (useCallback으로 메모이제이션하면 더 안전합니다)
+    const fetchUserInfo = useCallback(async () => {
         try {
             const res = await userApi.getInfo();
             if (res.data && res.data.success === true) {
@@ -25,12 +41,12 @@ function App() {
             console.error("인증 정보 로드 실패:", err);
             setUser(null);
         }
-    };
+    }, []);
 
-    // 첫 로드 시 한 번 실행
+    // 첫 로드 시 한 번만 실행
     useEffect(() => {
         fetchUserInfo().finally(() => setLoading(false));
-    }, []);
+    }, [fetchUserInfo]);
 
     const handleLogin = () => {
         window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/discord`;
@@ -40,41 +56,22 @@ function App() {
         window.location.href = `${import.meta.env.VITE_API_URL}/logout`;
     };
 
-    // 💡 홈 컴포넌트 내부에서 useEffect를 써서 마운트될 때마다 fetch 실행
-    const HomeContent = () => {
-        useEffect(() => {
-            fetchUserInfo(); // 홈 화면에 들어올 때마다 최신화
-        }, []);
-
-        return (
-            <div className={homeStyles.content}>
-                <h2 className={homeStyles.title}>STJ 프로젝트 메인</h2>
-                {user && user.success ? (
-                    <div className={homeStyles.charBox}>
-                        대표 캐릭터: <strong>{user.mainCharacterName || "미설정"}</strong>
-                    </div>
-                ) : (
-                    <p>서비스를 이용하려면 로그인이 필요합니다.</p>
-                )}
-            </div>
-        );
-    };
-
+    // ✅ 2. Route 설정에서 직접 컴포넌트에 user 전달
     const routeConfig = [
-        { path: "/", label: "홈", showInNav: true, element: <HomeContent /> },
-        { path: "/raid", label: "레이드 일정", showInNav: true, element: <RaidPage /> },
+        { path: "/", label: "홈", showInNav: true, element: <HomeContent user={user} /> },
+        { path: "/raid", label: "레이드 일정", showInNav: true, element: <RaidPage user={user} /> },
         { 
             path: "/my-raid", 
             label: "내 레이드", 
             showInNav: true,
-            element: <MyRaidPage /> 
+            element: <MyRaidPage user={user} /> 
         },
         { path: "/characters", label: "보유 캐릭터", showInNav: true, element: <div>준비 중</div> },
         { 
             path: "/admin", 
             label: "관리자 페이지", 
             showInNav: false, 
-            element: <AdminPage /> // 이제 onUserUpdate 프롭스는 굳이 필요 없습니다.
+            element: <AdminPage user={user} /> 
         }
     ];
 
