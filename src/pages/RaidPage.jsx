@@ -50,9 +50,16 @@ const RaidPage = ({ user }) => {
     const fetchParties = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/raids/parties`, { withCredentials: true });
-            setPartyList(response.data);
+            // 데이터가 배열인지 확인 후 세팅 (아니면 빈 배열)
+            if (Array.isArray(response.data)) {
+                setPartyList(response.data);
+            } else {
+                console.error("데이터가 배열 형식이 아닙니다:", response.data);
+                setPartyList([]);
+            }
         } catch (err) {
             console.error("데이터 로드 실패:", err);
+            setPartyList([]); // 에러 시 빈 배열로 초기화하여 filter 에러 방지
         }
     };
 
