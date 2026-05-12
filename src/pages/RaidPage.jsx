@@ -3,10 +3,9 @@ import axios from 'axios';
 import styles from '../css/RaidPage.module.css';
 
 const RaidPage = ({ user }) => {
-    // 관리자 여부 확인
     const isAdmin = user?.isAdmin || false;
 
-    // 1. 레이드 카테고리 데이터 구조 (고정)
+    // 레이드 카테고리 고정 데이터
     const raidData = [
         { 
             id: 'abyss', label: '어비스 던전', size: 4,
@@ -32,17 +31,13 @@ const RaidPage = ({ user }) => {
         }
     ];
 
-    // 2. 상태 관리
     const [activeMain, setActiveMain] = useState('abyss');
     const [activeSub, setActiveSub] = useState('church');
     const [activeDiff, setActiveDiff] = useState('3단계');
     const [partyList, setPartyList] = useState([]);
-    
-    // 모달 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalData, setModalData] = useState({ main: 'abyss', sub: 'church', diff: '3단계' });
 
-    // 3. 초기 데이터 로드 (DB에서 파티 목록 가져오기)
     useEffect(() => {
         fetchParties();
     }, []);
@@ -50,20 +45,16 @@ const RaidPage = ({ user }) => {
     const fetchParties = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/raids/parties`, { withCredentials: true });
-            // 데이터가 배열인지 확인 후 세팅 (아니면 빈 배열)
             if (Array.isArray(response.data)) {
                 setPartyList(response.data);
-            } else {
-                console.error("데이터가 배열 형식이 아닙니다:", response.data);
-                setPartyList([]);
             }
         } catch (err) {
             console.error("데이터 로드 실패:", err);
-            setPartyList([]); // 에러 시 빈 배열로 초기화하여 filter 에러 방지
+            setPartyList([]);
         }
     };
 
-    // 4. [관리자] 새 파티 생성 (DB 저장)
+    // [관리자] 새 파티 생성
     const handleConfirmCreate = async () => {
         const selectedMain = raidData.find(d => d.id === modalData.main);
         const newPartyRequest = {
@@ -78,43 +69,54 @@ const RaidPage = ({ user }) => {
             if (response.data) {
                 setPartyList(prev => [...prev, response.data]);
                 setIsModalOpen(false);
-                setActiveMain(modalData.main);
-                setActiveSub(modalData.sub);
-                setActiveDiff(modalData.diff);
-                alert("파티가 생성되었습니다.");
+                alert("새 파티가 생성되었습니다.");
             }
         } catch (err) {
-            alert("DB 등록 실패: 관리자 권한을 확인하세요.");
+            alert("파티 생성 실패");
         }
     };
 
-    // 5. [관리자] 파티 멤버 등록 (DB 수정)
+    // [관리자] 캐릭터 검색 및 멤버 등록
     const handleRegisterMember = async (partyId, slotIdx) => {
         const charName = prompt("등록할 캐릭터명을 입력하세요.");
         if (!charName) return;
 
         try {
-            await axios.put(
+            // 1. 로스트아크 캐릭터 정보 검색 (백엔드 API 호출)
+            // 주의: /api/lostark/character/ 경로가 백엔드에 구현되어 있어야 함
+            const searchRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/character/${charName}`);
+            const charData = searchRes.data;
+
+            if (!charData || !charData.characterName) {
+                alert("존재하지 않는 캐릭터입니다.");
+                return;
+            }
+
+            // 2. 검색된 캐릭터 정보를 MemberRegisterRequest DTO 형식으로 전송
+            const registerData = {
+                characterName: charData.characterName,
+                characterClass: charData.characterClassName,
+                itemLevel: charData.itemLevel
+            };
+
+            const response = await axios.put(
                 `${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIdx}`,
-                null,
-                { params: { characterName: charName }, withCredentials: true }
+                registerData,
+                { withCredentials: true }
             );
-            
-            // UI 즉시 반영
-            setPartyList(prev => prev.map(p => {
-                if (p.id === partyId) {
-                    const newMembers = [...p.members];
-                    newMembers[slotIdx] = { ...newMembers[slotIdx], characterName: charName };
-                    return { ...p, members: newMembers };
-                }
-                return p;
-            }));
+
+            if (response.status === 200) {
+                // UI 즉시 업데이트 (전체 목록 다시 불러오기 혹은 상태 변경)
+                fetchParties();
+                alert(`${charData.characterName} 등록 완료!`);
+            }
         } catch (err) {
-            alert("캐릭터 등록 실패");
+            console.error(err);
+            alert("캐릭터를 찾을 수 없거나 등록 중 오류가 발생했습니다.");
         }
     };
 
-    // 6. [관리자] 파티 멤버 삭제 (DB 수정)
+    // [관리자] 멤버 삭제
     const handleDeleteMember = async (partyId, slotIdx) => {
         if (!window.confirm("슬롯을 비우시겠습니까?")) return;
 
@@ -123,29 +125,24 @@ const RaidPage = ({ user }) => {
                 `${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIdx}`,
                 { withCredentials: true }
             );
-
-            setPartyList(prev => prev.map(p => {
-                if (p.id === partyId) {
-                    const newMembers = [...p.members];
-                    newMembers[slotIdx] = { ...newMembers[slotIdx], characterName: null };
-                    return { ...p, members: newMembers };
-                }
-                return p;
-            }));
+            fetchParties();
         } catch (err) {
             alert("삭제 실패");
         }
     };
 
-    // 필터링된 리스트
     const currentMainInfo = raidData.find(d => d.id === activeMain);
     const currentSubInfo = currentMainInfo.subCategories.find(s => s.id === activeSub);
-    const filteredParties = partyList.filter(p => p.raidName === activeSub && p.difficulty === activeDiff);
+    
+    // 안전하게 필터링 (partyList가 배열인지 확인)
+    const filteredParties = Array.isArray(partyList) 
+        ? partyList.filter(p => p.raidName === activeSub && p.difficulty === activeDiff)
+        : [];
 
     return (
         <div className={styles.raidContainer}>
             <div className={styles.headerRow}>
-                <h2 className={styles.title}>📅 레이드 고정공대 일정</h2>
+                <h2 className={styles.title}>📅 레이드 일정 관리</h2>
                 {isAdmin && (
                     <button className={styles.createBtn} onClick={() => setIsModalOpen(true)}>
                         + 새 파티 생성
@@ -153,7 +150,7 @@ const RaidPage = ({ user }) => {
                 )}
             </div>
 
-            {/* 메인 탭 */}
+            {/* 카테고리 탭 영역 */}
             <div className={styles.mainTabs}>
                 {raidData.map(main => (
                     <button 
@@ -161,8 +158,9 @@ const RaidPage = ({ user }) => {
                         className={`${styles.mainTabBtn} ${activeMain === main.id ? styles.activeMain : ''}`}
                         onClick={() => {
                             setActiveMain(main.id);
-                            setActiveSub(main.subCategories[0].id);
-                            setActiveDiff(main.subCategories[0].difficulties[0]);
+                            const firstSub = main.subCategories[0];
+                            setActiveSub(firstSub.id);
+                            setActiveDiff(firstSub.difficulties[0]);
                         }}
                     >
                         {main.label}
@@ -170,7 +168,6 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 상세 레이드 버튼 */}
             <div className={styles.subCategoryRow}>
                 {currentMainInfo.subCategories.map(sub => (
                     <button
@@ -186,7 +183,6 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 난이도 버튼 */}
             <div className={styles.diffRow}>
                 {currentSubInfo.difficulties.map(diff => (
                     <button
@@ -199,7 +195,7 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 파티 그리드 */}
+            {/* 파티 리스트 영역 */}
             <div className={styles.partyGrid}>
                 {filteredParties.length > 0 ? (
                     filteredParties.map(party => (
@@ -210,17 +206,26 @@ const RaidPage = ({ user }) => {
                                     const name = m.characterName;
 
                                     return (
-                                        <div key={idx} className={`${styles.memberSlot} ${name ? (isSupport ? styles.supportSlot : styles.dealerSlot) : styles.emptySlot}`}>
-                                            <span className={styles.leftIcon}>{name ? (isSupport ? '✨' : '⚔️') : '⚪'}</span>
-                                            <span className={styles.memberName}>{name || ''}</span>
-                                            {isAdmin && (
-                                                <button 
-                                                    className={styles.actionBtn} 
-                                                    onClick={() => name ? handleDeleteMember(party.id, idx) : handleRegisterMember(party.id, idx)}
-                                                >
-                                                    {name ? '-' : '+'}
-                                                </button>
-                                            )}
+                                        <div 
+                                            key={idx} 
+                                            className={`${styles.memberSlot} ${name ? (isSupport ? styles.supportSlot : styles.dealerSlot) : styles.emptySlot}`}
+                                            onClick={() => !name && isAdmin && handleRegisterMember(party.id, idx)}
+                                        >
+                                            <div className={styles.memberHeader}>
+                                                <span className={styles.roleIcon}>{name ? (isSupport ? '✨' : '⚔️') : '⚪'}</span>
+                                                {name && isAdmin && (
+                                                    <button 
+                                                        className={styles.deleteMiniBtn}
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteMember(party.id, idx); }}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className={styles.memberBody}>
+                                                <div className={styles.memberName}>{name || (isAdmin ? '등록' : '비어있음')}</div>
+                                                {name && <div className={styles.memberClass}>{m.characterClass} ({m.itemLevel})</div>}
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -232,7 +237,7 @@ const RaidPage = ({ user }) => {
                 )}
             </div>
 
-            {/* 생성 모달 */}
+            {/* 생성 모달 (생략 - 이전과 동일) */}
             {isModalOpen && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
