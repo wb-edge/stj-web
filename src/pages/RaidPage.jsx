@@ -12,7 +12,7 @@ const RaidPage = ({ user }) => {
     // 아코디언 열림/닫힘 상태 관리
     const [expandedGroups, setExpandedGroups] = useState({});
 
-    // 레이드 카테고리 데이터 (구조 유지)
+    // 레이드 카테고리 데이터
     const raidData = [
         { id: 'abyss', label: '어비스 던전', size: 4, subCategories: [{ id: 'church', label: '지평의 성당', difficulties: ['3단계', '2단계', '1단계'] }] },
         { id: 'shadow', label: '그림자 레이드', size: 4, subCategories: [{ id: 'serca', label: '고통의 마녀 : 세르카', difficulties: ['나이트메어', '하드', '노말'] }] },
@@ -39,6 +39,23 @@ const RaidPage = ({ user }) => {
         setExpandedGroups(prev => ({ ...prev, [groupKey]: !prev[groupKey] }));
     };
 
+    // 파티 생성
+    const handleCreateParty = async () => {
+        const selectedRaid = raidData.find(r => r.id === modalData.main);
+        const payload = {
+            raidType: modalData.main,
+            raidName: modalData.sub,
+            difficulty: modalData.diff,
+            maxSize: selectedRaid.size
+        };
+
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/raids/party`, payload, { withCredentials: true });
+            setIsModalOpen(false);
+            fetchParties();
+        } catch (err) { alert("파티 생성 실패"); }
+    };
+
     // 파티 전체 삭제
     const handleDeleteParty = async (partyId) => {
         if (!window.confirm("이 파티를 완전히 삭제하시겠습니까?")) return;
@@ -48,7 +65,7 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("삭제 실패"); }
     };
 
-    // 클리어 체크 (완료 토글) - 백엔드 엔티티에 isCleared 필드가 있다고 가정
+    // 클리어 체크 (완료 토글)
     const handleToggleClear = async (partyId) => {
         try {
             await axios.put(`${import.meta.env.VITE_API_URL}/api/raids/party/${partyId}/clear`, {}, { withCredentials: true });
@@ -56,7 +73,21 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("클리어 처리 실패"); }
     };
 
-    // 현재 선택된 대분류의 파티들을 [레이드명 + 난이도]로 그룹핑
+    // 멤버 등록 (관리자용)
+    const handleRegisterMember = (partyId, slotIndex) => {
+        // 멤버 등록 팝업이나 프롬프트 로직이 있다면 여기에 추가
+        console.log(`등록 요청: Party ${partyId}, Slot ${slotIndex}`);
+    };
+
+    // 멤버 삭제 (관리자용)
+    const handleDeleteMember = async (partyId, slotIndex) => {
+        if (!window.confirm("멤버를 해제하시겠습니까?")) return;
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, { withCredentials: true });
+            fetchParties();
+        } catch (err) { alert("멤버 삭제 실패"); }
+    };
+
     const getGroupedParties = () => {
         const currentMain = raidData.find(d => d.id === activeMain);
         const groups = [];
@@ -75,7 +106,6 @@ const RaidPage = ({ user }) => {
     };
 
     const getClassIcon = (className) => {
-        // 직접 주신 주소를 건슬링어에 매핑하고 나머지도 비슷한 규칙으로 설정 가능합니다.
         const iconMap = {
             "디스트로이어" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_destroyer.png",
             "발키리" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_holyknight_female.png",
@@ -106,7 +136,6 @@ const RaidPage = ({ user }) => {
             "도화가" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_yinyangshi.png",
             "환수사" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_alchemist.png",
             "가디언나이트" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_dragon_knight.png",
-            // 다른 클래스들도 패턴에 맞춰 추가 가능합니다.
         };
         return iconMap[className] || "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_default.png";
     };
@@ -118,7 +147,6 @@ const RaidPage = ({ user }) => {
                 {isAdmin && <button className={styles.createBtn} onClick={() => setIsModalOpen(true)}>+ 새 파티 생성</button>}
             </div>
 
-            {/* 대분류 탭만 남김 */}
             <div className={styles.mainTabs}>
                 {raidData.map(main => (
                     <button 
@@ -131,7 +159,6 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 아코디언 그룹 리스트 */}
             <div className={styles.accordionContainer}>
                 {getGroupedParties().map(group => (
                     <div key={group.key} className={styles.accordionGroup}>
@@ -146,7 +173,7 @@ const RaidPage = ({ user }) => {
                             <div className={styles.accordionContent}>
                                 {group.parties.length > 0 ? (
                                     group.parties.map(party => (
-                                        <div key={party.id} className={`${styles.partyCard} ${party.isCleared ? styles.clearedParty : ''}`}>
+                                        <div key={party.id} className={`${styles.partyCard} ${party.cleared ? styles.clearedParty : ''}`}>
                                             <div className={styles.partyCardHeader}>
                                                 <span className={styles.partyTitle}>#{party.id} 파티</span>
                                                 <div className={styles.partyActions}>
@@ -189,7 +216,66 @@ const RaidPage = ({ user }) => {
                     </div>
                 ))}
             </div>
-            {/* 모달 생략 */}
+
+            {/* 파티 생성 모달 */}
+            {isModalOpen && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3>🆕 새 파티 생성</h3>
+                        <div className={styles.modalBody}>
+                            <label>카테고리</label>
+                            <select 
+                                value={modalData.main} 
+                                onChange={(e) => {
+                                    const mainId = e.target.value;
+                                    const firstSub = raidData.find(r => r.id === mainId).subCategories[0];
+                                    setModalData({
+                                        main: mainId,
+                                        sub: firstSub.id,
+                                        diff: firstSub.difficulties[0]
+                                    });
+                                }}
+                            >
+                                {raidData.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
+                            </select>
+
+                            <label>레이드명</label>
+                            <select 
+                                value={modalData.sub} 
+                                onChange={(e) => {
+                                    const subId = e.target.value;
+                                    const currentMain = raidData.find(r => r.id === modalData.main);
+                                    const subObj = currentMain.subCategories.find(s => s.id === subId);
+                                    setModalData({
+                                        ...modalData,
+                                        sub: subId,
+                                        diff: subObj.difficulties[0]
+                                    });
+                                }}
+                            >
+                                {raidData.find(r => r.id === modalData.main).subCategories.map(s => (
+                                    <option key={s.id} value={s.id}>{s.label}</option>
+                                ))}
+                            </select>
+
+                            <label>난이도</label>
+                            <select 
+                                value={modalData.diff} 
+                                onChange={(e) => setModalData({...modalData, diff: e.target.value})}
+                            >
+                                {raidData.find(r => r.id === modalData.main)
+                                    .subCategories.find(s => s.id === modalData.sub).difficulties.map(d => (
+                                    <option key={d} value={d}>{d}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className={styles.modalActions}>
+                            <button className={styles.confirmBtn} onClick={handleCreateParty}>생성하기</button>
+                            <button className={styles.cancelBtn} onClick={() => setIsModalOpen(false)}>취소</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
