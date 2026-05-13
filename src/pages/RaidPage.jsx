@@ -42,6 +42,22 @@ const RaidPage = ({ user }) => {
         fetchParties();
     }, []);
 
+    // 로스트아크 공식 클래스 아이콘 URL 매핑 함수
+    const getClassIcon = (className) => {
+        const iconMap = {
+            "버서커": "berserker", "디스트로이어": "destroyer", "워로드": "warlord", "홀리나이트": "holyknight",
+            "배틀마스터": "battlemaster", "인파이터": "infighter", "기공사": "soulmaster", "창술사": "lancemaster", "스트라이커": "striker", "브레이커": "breaker",
+            "데빌헌터": "devilhunter", "블래스터": "blaster", "호크아이": "hawkeye", "스카우터": "scouter", "건슬링어": "gunslinger",
+            "바드": "bard", "서머너": "summoner", "아르카나": "arcana", "소서리스": "sorceress",
+            "블레이드": "blade", "데모닉": "demonic", "리퍼": "reaper", "소울이터": "souleater",
+            "기상술사": "weatherartist", "도화가": "artist", "슬레이어": "slayer"
+        };
+        const key = iconMap[className];
+        return key 
+            ? `https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/class/class_${key}.png`
+            : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/class/class_default.png";
+    };
+
     const fetchParties = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/raids/parties`, { withCredentials: true });
@@ -54,7 +70,6 @@ const RaidPage = ({ user }) => {
         }
     };
 
-    // [관리자] 새 파티 생성
     const handleConfirmCreate = async () => {
         const selectedMain = raidData.find(d => d.id === modalData.main);
         const newPartyRequest = {
@@ -76,14 +91,11 @@ const RaidPage = ({ user }) => {
         }
     };
 
-    // [관리자] 캐릭터 검색 및 멤버 등록
     const handleRegisterMember = async (partyId, slotIdx) => {
         const charName = prompt("등록할 캐릭터명을 입력하세요.");
         if (!charName) return;
 
         try {
-            // 1. 로스트아크 캐릭터 정보 검색 (백엔드 API 호출)
-            // 주의: /api/lostark/character/ 경로가 백엔드에 구현되어 있어야 함
             const searchRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/character/${charName}`);
             const charData = searchRes.data;
 
@@ -92,7 +104,6 @@ const RaidPage = ({ user }) => {
                 return;
             }
 
-            // 2. 검색된 캐릭터 정보를 MemberRegisterRequest DTO 형식으로 전송
             const registerData = {
                 characterName: charData.characterName,
                 characterClass: charData.characterClassName,
@@ -106,9 +117,7 @@ const RaidPage = ({ user }) => {
             );
 
             if (response.status === 200) {
-                // UI 즉시 업데이트 (전체 목록 다시 불러오기 혹은 상태 변경)
                 fetchParties();
-                alert(`${charData.characterName} 등록 완료!`);
             }
         } catch (err) {
             console.error(err);
@@ -116,7 +125,6 @@ const RaidPage = ({ user }) => {
         }
     };
 
-    // [관리자] 멤버 삭제
     const handleDeleteMember = async (partyId, slotIdx) => {
         if (!window.confirm("슬롯을 비우시겠습니까?")) return;
 
@@ -134,7 +142,6 @@ const RaidPage = ({ user }) => {
     const currentMainInfo = raidData.find(d => d.id === activeMain);
     const currentSubInfo = currentMainInfo.subCategories.find(s => s.id === activeSub);
     
-    // 안전하게 필터링 (partyList가 배열인지 확인)
     const filteredParties = Array.isArray(partyList) 
         ? partyList.filter(p => p.raidName === activeSub && p.difficulty === activeDiff)
         : [];
@@ -150,7 +157,6 @@ const RaidPage = ({ user }) => {
                 )}
             </div>
 
-            {/* 카테고리 탭 영역 */}
             <div className={styles.mainTabs}>
                 {raidData.map(main => (
                     <button 
@@ -195,7 +201,6 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 파티 리스트 영역 */}
             <div className={styles.partyGrid}>
                 {filteredParties.length > 0 ? (
                     filteredParties.map(party => (
@@ -211,21 +216,38 @@ const RaidPage = ({ user }) => {
                                             className={`${styles.memberSlot} ${name ? (isSupport ? styles.supportSlot : styles.dealerSlot) : styles.emptySlot}`}
                                             onClick={() => !name && isAdmin && handleRegisterMember(party.id, idx)}
                                         >
-                                            <div className={styles.memberHeader}>
-                                                <span className={styles.roleIcon}>{name ? (isSupport ? '✨' : '⚔️') : '⚪'}</span>
-                                                {name && isAdmin && (
-                                                    <button 
-                                                        className={styles.deleteMiniBtn}
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteMember(party.id, idx); }}
-                                                    >
-                                                        ×
-                                                    </button>
-                                                )}
-                                            </div>
-                                            <div className={styles.memberBody}>
-                                                <div className={styles.memberName}>{name || (isAdmin ? '등록' : '비어있음')}</div>
-                                                {name && <div className={styles.memberClass}>{m.characterClass} ({m.itemLevel})</div>}
-                                            </div>
+                                            {name ? (
+                                                <div className={styles.memberContent}>
+                                                    {/* 직업 아이콘 */}
+                                                    <img 
+                                                        src={getClassIcon(m.characterClass)} 
+                                                        className={styles.classIcon} 
+                                                        alt={m.characterClass} 
+                                                    />
+                                                    
+                                                    <div className={styles.memberTextInfo}>
+                                                        <div className={styles.nameRow}>
+                                                            {/* 템렙 (소수점 버림, 앞 배치) */}
+                                                            <span className={styles.levelTag}>
+                                                                {Math.floor(parseFloat(m.itemLevel?.replace(/,/g, '') || 0))}
+                                                            </span>
+                                                            <span className={styles.charNameDisplay}>{name}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 우측 삭제 버튼 */}
+                                                    {isAdmin && (
+                                                        <button 
+                                                            className={styles.deleteMiniBtnCircle}
+                                                            onClick={(e) => { e.stopPropagation(); handleDeleteMember(party.id, idx); }}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className={styles.emptyText}>{isAdmin ? '+' : 'Empty'}</div>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -237,7 +259,7 @@ const RaidPage = ({ user }) => {
                 )}
             </div>
 
-            {/* 생성 모달 (생략 - 이전과 동일) */}
+            {/* 생성 모달 */}
             {isModalOpen && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
