@@ -1,5 +1,3 @@
-/* src/css/RaidPage.module.css */
-
 .raidContainer {
     padding: 10px 16px 16px 16px;
     max-width: 1200px;
@@ -22,7 +20,6 @@
     padding-left: 10px;
 }
 
-/* 1단계: 메인 카테고리 탭 */
 .mainTabs {
     display: flex;
     gap: 4px;
@@ -50,193 +47,179 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-/* 2단계: 상세 레이드 버튼 */
-.subCategoryRow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 15px;
-}
-
-.subBtn {
-    padding: 6px 12px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 16px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: #555;
-    transition: all 0.2s;
-}
-
-.subBtn:hover {
-    border-color: #5865F2;
-    color: #5865F2;
-}
-
-.activeSub {
-    background: #5865F2;
-    color: white;
-    border-color: #5865F2;
-}
-
-/* 3단계: 난이도 선택 버튼 */
-.diffRow {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 15px;
-    padding: 8px 10px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
+/* 아코디언 */
+.accordionGroup {
+    margin-bottom: 10px;
     border: 1px solid #eee;
-}
-
-.diffBtn {
-    padding: 4px 10px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
     background: white;
-    border-radius: 4px;
+}
+
+.accordionHeader {
+    padding: 12px 16px;
     cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #777;
-    transition: 0.2s;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
 }
 
-.diffBtn:hover {
-    border-color: #5865F2;
+.groupLabel {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+.partyCount {
+    margin-left: 10px;
     color: #5865F2;
+    font-size: 0.8rem;
 }
 
-.activeDiff {
-    background: #444;
-    color: white;
-    border-color: #444;
+.accordionContent {
+    padding: 12px;
+    background-color: #fbfbfb;
+    border-top: 1px solid #f0f0f0;
 }
 
-/* 파티 카드 레이아웃 */
-.partyGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-}
-
+/* 파티 카드 */
 .partyCard {
     background: white;
     border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     border: 1px solid #eee;
 }
 
+.clearedCard {
+    opacity: 0.5;
+    filter: grayscale(0.9);
+    background-color: #f1f1f1 !important;
+}
+
+.partyTopRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.partyIdText {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #999;
+}
+
+.partyAdminActions {
+    display: flex;
+    gap: 8px;
+}
+
+/* 멤버 그리드 */
 .memberGrid4, .memberGrid8 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
 }
 
-/* 슬롯 공통 스타일 */
 .memberSlot {
-    height: 42px;
-    padding: 0 8px;
+    height: 44px;
     border-radius: 6px;
+    padding: 0 8px;
     display: flex;
     align-items: center;
-    border: 1px solid;
-    transition: transform 0.1s ease;
     cursor: pointer;
-    overflow: hidden;
+    border: 1px solid transparent;
 }
 
-.memberSlot:hover {
-    transform: translateY(-1px);
-}
-
-/* 멤버 등록 상태 레이아웃 */
 .memberContent {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 12px; /* 아이콘과 텍스트 사이 간격 증가 */
+    gap: 12px;
 }
 
 .classIcon {
-    width: 30px;
-    height: 30px;
-    border-radius: 4px; /* 원형보다는 약간 각진게 엠블럼에 어울림 */
+    width: 32px;
+    height: 32px;
+    background-color: #1a1d23;
+    border-radius: 4px;
     object-fit: contain;
     border: 1px solid #333;
-    flex-shrink: 0;
 }
 
 .memberTextInfo {
     flex: 1;
     display: flex;
-    align-items: center; /* baseline에서 center로 변경하여 수직 중앙 맞춤 */
+    align-items: center;
     min-width: 0;
 }
 
 .nameRow {
     display: flex;
     align-items: center;
-    gap: 10px; /* 템렙과 캐릭터명 사이 간격 대폭 증가 */
+    gap: 10px;
 }
 
-/* 템렙: 색상을 조금 더 진하게 (눈에 띄게) */
 .levelTag {
     font-size: 0.75rem;
-    color: #64748b; /* 조금 더 선명한 청회색 */
-    font-weight: 700;
-    font-family: 'Consolas', monospace; /* 숫자 가독성 향상 */
-    flex-shrink: 0;
+    color: #555; /* 더 눈에 띄게 진하게 수정 */
+    font-weight: 800;
+    font-family: monospace;
 }
 
-/* 캐릭터명 */
 .charNameDisplay {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #1e293b; /* 글자색 더 진하게 */
+    color: #111;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* 삭제 버튼 */
 .deleteMiniBtnCircle {
     background: none;
     border: none;
-    color: #94a3b8; /* 평소엔 더 연하게 */
+    color: #bbb;
     font-size: 1.2rem;
     cursor: pointer;
-    margin-left: auto; /* 확실하게 우측 밀기 */
-    transition: color 0.2s;
+    margin-left: auto;
 }
 
-.deleteMiniBtnCircle:hover {
-    color: #ef4444;
+/* 슬롯 색상 */
+.dealerSlot { background: #f1f5f9; border-color: #cbd5e1; }
+.supportSlot { background: #ecfdf5; border-color: #a7f3d0; }
+.emptySlot { background: #fafafa; border-color: #ddd; border-style: dashed; justify-content: center; color: #ccc; }
+
+/* 버튼 */
+.clearBtn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-/* 슬롯 성격별 색상 */
-.dealerSlot {
-    background: #f1f5f9; /* 약간 더 진한 회색 */
-    border-color: #cbd5e1;
+.clearActive {
+    background: #e6fffa;
+    border-color: #38b2ac;
+    color: #2c7a7b;
+    font-weight: bold;
 }
 
-.supportSlot {
-    background: #ecfdf5; /* 약간 더 진한 연두색 */
-    border-color: #a7f3d0;
+.deletePartyBtn {
+    background: #fff5f5;
+    color: #e53e3e;
+    border: 1px solid #feb2b2;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.emptySlot {
-    background: #fafafa;
-    border-color: #cbd5e1;
-    border-style: dashed;
-    justify-content: center;
-    color: #94a3b8;
-    font-size: 0.8rem;
-}
-
-/* 새 파티 생성 버튼 */
 .createBtn {
     background-color: #5865F2;
     color: white;
@@ -244,129 +227,5 @@
     padding: 8px 14px;
     border-radius: 6px;
     font-weight: bold;
-    font-size: 0.85rem;
     cursor: pointer;
-}
-
-/* 모달 스타일 */
-.modalOverlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 1000;
-}
-
-.modalContent {
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    width: 350px;
-}
-
-.modalBody {
-    display: flex; flex-direction: column; gap: 10px; margin: 20px 0;
-}
-
-.modalBody label { font-size: 0.85rem; font-weight: bold; color: #666; }
-.modalBody select { padding: 8px; border-radius: 4px; border: 1px solid #ddd; }
-.modalActions { display: flex; gap: 10px; justify-content: flex-end; }
-
-.confirmBtn { background: #5865F2; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
-.cancelBtn { background: #eee; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
-
-.noData {
-    text-align: center;
-    padding: 30px;
-    color: #aaa;
-    background: #fafafa;
-    border-radius: 8px;
-    border: 2px dashed #eee;
-}
-
-/* 아코디언 그룹 스타일 */
-.accordionGroup {
-    margin-bottom: 8px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.accordionHeader {
-    background-color: #ffffff;
-    padding: 12px 16px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.2s;
-}
-
-.accordionHeader:hover {
-    background-color: #f8f9fa;
-}
-
-.groupLabel {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #333;
-}
-
-.partyCount {
-    margin-left: 8px;
-    color: #5865F2;
-    font-size: 0.85rem;
-}
-
-.accordionContent {
-    background-color: #fafafa;
-    padding: 12px;
-}
-
-/* 파티 카드 헤더 및 액션 */
-.partyCardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px dashed #ddd;
-}
-
-.partyTitle {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #666;
-}
-
-.partyActions {
-    display: flex;
-    gap: 8px;
-}
-
-.clearCheckBtn {
-    background: white;
-    border: 1px solid #ddd;
-    padding: 2px 8px;
-    font-size: 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.deletePartyBtn {
-    background: #fff0f0;
-    color: #ff4d4f;
-    border: 1px solid #ffccc7;
-    padding: 2px 8px;
-    font-size: 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* 클리어 완료 시 스타일 */
-.clearedParty {
-    opacity: 0.6;
-    filter: grayscale(0.5);
-    background-color: #f0f0f0 !important;
 }
