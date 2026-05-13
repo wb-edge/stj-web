@@ -51,7 +51,7 @@ const RaidPage = ({ user }) => {
     // 클리어 체크 (완료 토글) - 백엔드 엔티티에 isCleared 필드가 있다고 가정
     const handleToggleClear = async (partyId) => {
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/clear`, {}, { withCredentials: true });
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/raids/party/${partyId}/clear`, {}, { withCredentials: true });
             fetchParties();
         } catch (err) { alert("클리어 처리 실패"); }
     };

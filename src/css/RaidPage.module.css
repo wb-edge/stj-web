@@ -345,6 +345,14 @@
     gap: 8px;
 }
 
+.clearCheckBtn, .deletePartyBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1; /* 텍스트가 튀어 보이지 않게 */
+    height: 28px; /* 💡 추가: 버튼 높이를 고정하면 위치가 절대 안 어긋납니다 */
+}
+
 .clearCheckBtn {
     background: white;
     border: 1px solid #ddd;
