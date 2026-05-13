@@ -60,6 +60,7 @@ function App() {
     const routeConfig = [
         { path: "/", label: "홈", showInNav: true, element: <HomeContent user={user} /> },
         { path: "/raid", label: "레이드 일정", showInNav: true, element: <RaidPage user={user} /> },
+        /*
         { 
             path: "/my-raid", 
             label: "내 레이드", 
@@ -67,6 +68,7 @@ function App() {
             element: <MyRaidPage user={user} /> 
         },
         { path: "/characters", label: "보유 캐릭터", showInNav: true, element: <div>준비 중</div> },
+        */
         { 
             path: "/admin", 
             label: "관리자 페이지", 
