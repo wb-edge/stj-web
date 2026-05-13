@@ -157,65 +157,74 @@
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 8px;
+    gap: 12px; /* 아이콘과 텍스트 사이 간격 증가 */
 }
 
 .classIcon {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background-color: #000;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px; /* 원형보다는 약간 각진게 엠블럼에 어울림 */
+    object-fit: contain;
+    border: 1px solid #333;
     flex-shrink: 0;
 }
 
 .memberTextInfo {
     flex: 1;
     display: flex;
-    align-items: baseline;
-    gap: 5px;
-    min-width: 0; /* 텍스트 생략 기능을 위해 필요 */
+    align-items: center; /* baseline에서 center로 변경하여 수직 중앙 맞춤 */
+    min-width: 0;
 }
 
+.nameRow {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 템렙과 캐릭터명 사이 간격 대폭 증가 */
+}
+
+/* 템렙: 색상을 조금 더 진하게 (눈에 띄게) */
 .levelTag {
-    font-size: 0.7rem;
-    color: #888;
-    font-weight: 500;
+    font-size: 0.75rem;
+    color: #64748b; /* 조금 더 선명한 청회색 */
+    font-weight: 700;
+    font-family: 'Consolas', monospace; /* 숫자 가독성 향상 */
     flex-shrink: 0;
 }
 
+/* 캐릭터명 */
 .charNameDisplay {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b; /* 글자색 더 진하게 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* 삭제 버튼 (우측 배치) */
+/* 삭제 버튼 */
 .deleteMiniBtnCircle {
     background: none;
     border: none;
-    color: #ccc;
+    color: #94a3b8; /* 평소엔 더 연하게 */
     font-size: 1.2rem;
     cursor: pointer;
-    padding: 0 2px;
-    line-height: 1;
+    margin-left: auto; /* 확실하게 우측 밀기 */
     transition: color 0.2s;
 }
 
 .deleteMiniBtnCircle:hover {
-    color: #ff4d4f;
+    color: #ef4444;
 }
 
 /* 슬롯 성격별 색상 */
 .dealerSlot {
-    background: #f8fafc;
-    border-color: #e2e8f0;
+    background: #f1f5f9; /* 약간 더 진한 회색 */
+    border-color: #cbd5e1;
 }
 
 .supportSlot {
-    background: #f0fdf4;
-    border-color: #bbf7d0;
+    background: #ecfdf5; /* 약간 더 진한 연두색 */
+    border-color: #a7f3d0;
 }
 
 .emptySlot {

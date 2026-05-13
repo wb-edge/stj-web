@@ -44,18 +44,13 @@ const RaidPage = ({ user }) => {
 
     // 로스트아크 공식 클래스 아이콘 URL 매핑 함수
     const getClassIcon = (className) => {
+        // 직접 주신 주소를 건슬링어에 매핑하고 나머지도 비슷한 규칙으로 설정 가능합니다.
         const iconMap = {
-            "버서커": "berserker", "디스트로이어": "destroyer", "워로드": "warlord", "홀리나이트": "holyknight",
-            "배틀마스터": "battlemaster", "인파이터": "infighter", "기공사": "soulmaster", "창술사": "lancemaster", "스트라이커": "striker", "브레이커": "breaker",
-            "데빌헌터": "devilhunter", "블래스터": "blaster", "호크아이": "hawkeye", "스카우터": "scouter", "건슬링어": "gunslinger",
-            "바드": "bard", "서머너": "summoner", "아르카나": "arcana", "소서리스": "sorceress",
-            "블레이드": "blade", "데모닉": "demonic", "리퍼": "reaper", "소울이터": "souleater",
-            "기상술사": "weatherartist", "도화가": "artist", "슬레이어": "slayer"
+            "건슬링어": "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_devil_hunter_female.png",
+            "데빌헌터": "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_devil_hunter.png",
+            // 다른 클래스들도 패턴에 맞춰 추가 가능합니다.
         };
-        const key = iconMap[className];
-        return key 
-            ? `https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/class/class_${key}.png`
-            : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/class/class_default.png";
+        return iconMap[className] || "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_default.png";
     };
 
     const fetchParties = async () => {
@@ -223,6 +218,7 @@ const RaidPage = ({ user }) => {
                                                         src={getClassIcon(m.characterClass)} 
                                                         className={styles.classIcon} 
                                                         alt={m.characterClass} 
+                                                        style={{ backgroundColor: '#1a1d23' }}
                                                     />
                                                     
                                                     <div className={styles.memberTextInfo}>
