@@ -8,7 +8,6 @@ const RaidPage = ({ user }) => {
     const [partyList, setPartyList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalData, setModalData] = useState({ main: 'abyss', sub: 'church', diff: '3단계' });
-    
     const [expandedGroups, setExpandedGroups] = useState({});
 
     const raidData = [
@@ -66,30 +65,18 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("클리어 처리 실패"); }
     };
 
-    // 💡 멤버 등록 (핵심 수정 부분)
     const handleRegisterMember = async (partyId, slotIndex) => {
         const charName = window.prompt("등록할 캐릭터 이름을 입력하세요.");
         if (!charName) return;
-
         try {
-            // 1. 로아 API 등을 통해 캐릭터 정보 가져오기 (이미 구현된 백엔드 엔드포인트 활용)
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/character/${charName}`, { withCredentials: true });
-            
             if (res.data) {
                 const { characterName, characterClassName, itemLevel } = res.data;
-                const payload = { 
-                    characterName, 
-                    characterClass: characterClassName, // 여기서 필드명을 맞춰줌
-                    itemLevel 
-                };
-
-                // 2. 해당 파티 슬롯에 등록
+                const payload = { characterName, characterClass: characterClassName, itemLevel };
                 await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, payload, { withCredentials: true });
                 fetchParties();
             }
-        } catch (err) {
-            alert("캐릭터 정보를 찾을 수 없거나 등록에 실패했습니다.");
-        }
+        } catch (err) { alert("캐릭터 정보를 찾을 수 없거나 등록에 실패했습니다."); }
     };
 
     const handleDeleteMember = async (partyId, slotIndex) => {
@@ -98,6 +85,18 @@ const RaidPage = ({ user }) => {
             await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, { withCredentials: true });
             fetchParties();
         } catch (err) { alert("멤버 삭제 실패"); }
+    };
+
+    const getGroupedParties = () => {
+        const currentMain = raidData.find(d => d.id === activeMain);
+        const groups = [];
+        currentMain.subCategories.forEach(sub => {
+            sub.difficulties.forEach(diff => {
+                const parties = partyList.filter(p => p.raidName === sub.id && p.difficulty === diff);
+                groups.push({ key: `${sub.id}-${diff}`, label: `${sub.label} [${diff}]`, parties: parties });
+            });
+        });
+        return groups;
     };
 
     const getClassIcon = (className) => {
@@ -133,22 +132,6 @@ const RaidPage = ({ user }) => {
             "가디언나이트" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_dragon_knight.png",
         };
         return iconMap[className] || "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_default.png";
-    };
-
-    const getGroupedParties = () => {
-        const currentMain = raidData.find(d => d.id === activeMain);
-        const groups = [];
-        currentMain.subCategories.forEach(sub => {
-            sub.difficulties.forEach(diff => {
-                const parties = partyList.filter(p => p.raidName === sub.id && p.difficulty === diff);
-                groups.push({
-                    key: `${sub.id}-${diff}`,
-                    label: `${sub.label} [${diff}]`,
-                    parties: parties
-                });
-            });
-        });
-        return groups;
     };
 
     return (
@@ -194,6 +177,7 @@ const RaidPage = ({ user }) => {
                                                     {isAdmin && <button onClick={() => handleDeleteParty(party.id)} className={styles.deletePartyBtn}>삭제</button>}
                                                 </div>
                                             </div>
+                                            {/* 💡 maxSize에 따라 클래스 부여 */}
                                             <div className={party.maxSize === 8 ? styles.memberGrid8 : styles.memberGrid4}>
                                                 {party.members.map((m, idx) => {
                                                     const isSupport = (party.maxSize === 4 && idx === 3) || (party.maxSize === 8 && idx >= 6);
@@ -205,7 +189,7 @@ const RaidPage = ({ user }) => {
                                                         >
                                                             {m.characterName ? (
                                                                 <div className={styles.memberContent}>
-                                                                    <img src={getClassIcon(m.characterClass)} className={styles.classIcon} alt="" style={{ backgroundColor: '#1a1d23' }}/>
+                                                                    <img src={getClassIcon(m.characterClass)} className={styles.classIcon} alt="" />
                                                                     <div className={styles.memberTextInfo}>
                                                                         <div className={styles.nameRow}>
                                                                             <span className={styles.levelTag}>{Math.floor(parseFloat(m.itemLevel?.replace(/,/g, '') || 0))}</span>
@@ -228,7 +212,6 @@ const RaidPage = ({ user }) => {
                 ))}
             </div>
 
-            {/* 파티 생성 모달 */}
             {isModalOpen && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
@@ -245,7 +228,6 @@ const RaidPage = ({ user }) => {
                             >
                                 {raidData.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
                             </select>
-
                             <label>레이드명</label>
                             <select 
                                 value={modalData.sub} 
@@ -260,7 +242,6 @@ const RaidPage = ({ user }) => {
                                     <option key={s.id} value={s.id}>{s.label}</option>
                                 ))}
                             </select>
-
                             <label>난이도</label>
                             <select 
                                 value={modalData.diff} 
