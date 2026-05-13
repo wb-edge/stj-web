@@ -80,7 +80,7 @@ const RaidPage = ({ user }) => {
                 const payload = { characterName, characterClass, itemLevel };
 
                 // 2. 해당 파티 슬롯에 등록
-                await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, payload, { withCredentials: true });
+                await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, payload, { withCredentials: true });
                 fetchParties();
             }
         } catch (err) {
