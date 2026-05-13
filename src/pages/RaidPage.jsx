@@ -151,7 +151,7 @@ const RaidPage = ({ user }) => {
                                                 <span className={styles.partyTitle}>#{party.id} 파티</span>
                                                 <div className={styles.partyActions}>
                                                     <button onClick={() => handleToggleClear(party.id)} className={styles.clearCheckBtn}>
-                                                        {party.isCleared ? '✅ 완료됨' : '⬜ 미클리어'}
+                                                        {party.cleared ? '✅ 완료됨' : '⬜ 미클리어'}
                                                     </button>
                                                     {isAdmin && <button onClick={() => handleDeleteParty(party.id)} className={styles.deletePartyBtn}>삭제</button>}
                                                 </div>
