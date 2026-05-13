@@ -9,10 +9,8 @@ const RaidPage = ({ user }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalData, setModalData] = useState({ main: 'abyss', sub: 'church', diff: '3단계' });
     
-    // 아코디언 열림/닫힘 상태 관리
     const [expandedGroups, setExpandedGroups] = useState({});
 
-    // 레이드 카테고리 데이터
     const raidData = [
         { id: 'abyss', label: '어비스 던전', size: 4, subCategories: [{ id: 'church', label: '지평의 성당', difficulties: ['3단계', '2단계', '1단계'] }] },
         { id: 'shadow', label: '그림자 레이드', size: 4, subCategories: [{ id: 'serca', label: '고통의 마녀 : 세르카', difficulties: ['나이트메어', '하드', '노말'] }] },
@@ -34,12 +32,10 @@ const RaidPage = ({ user }) => {
         } catch (err) { console.error(err); }
     };
 
-    // 아코디언 토글
     const toggleGroup = (groupKey) => {
         setExpandedGroups(prev => ({ ...prev, [groupKey]: !prev[groupKey] }));
     };
 
-    // 파티 생성
     const handleCreateParty = async () => {
         const selectedRaid = raidData.find(r => r.id === modalData.main);
         const payload = {
@@ -48,7 +44,6 @@ const RaidPage = ({ user }) => {
             difficulty: modalData.diff,
             maxSize: selectedRaid.size
         };
-
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/raids/party`, payload, { withCredentials: true });
             setIsModalOpen(false);
@@ -56,7 +51,6 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("파티 생성 실패"); }
     };
 
-    // 파티 전체 삭제
     const handleDeleteParty = async (partyId) => {
         if (!window.confirm("이 파티를 완전히 삭제하시겠습니까?")) return;
         try {
@@ -65,7 +59,6 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("삭제 실패"); }
     };
 
-    // 클리어 체크 (완료 토글)
     const handleToggleClear = async (partyId) => {
         try {
             await axios.put(`${import.meta.env.VITE_API_URL}/api/raids/party/${partyId}/clear`, {}, { withCredentials: true });
@@ -73,36 +66,34 @@ const RaidPage = ({ user }) => {
         } catch (err) { alert("클리어 처리 실패"); }
     };
 
-    // 멤버 등록 (관리자용)
-    const handleRegisterMember = (partyId, slotIndex) => {
-        // 멤버 등록 팝업이나 프롬프트 로직이 있다면 여기에 추가
-        console.log(`등록 요청: Party ${partyId}, Slot ${slotIndex}`);
+    // 💡 멤버 등록 (핵심 수정 부분)
+    const handleRegisterMember = async (partyId, slotIndex) => {
+        const charName = window.prompt("등록할 캐릭터 이름을 입력하세요.");
+        if (!charName) return;
+
+        try {
+            // 1. 로아 API 등을 통해 캐릭터 정보 가져오기 (이미 구현된 백엔드 엔드포인트 활용)
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/character/${charName}`, { withCredentials: true });
+            
+            if (res.data) {
+                const { characterName, characterClass, itemLevel } = res.data;
+                const payload = { characterName, characterClass, itemLevel };
+
+                // 2. 해당 파티 슬롯에 등록
+                await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, payload, { withCredentials: true });
+                fetchParties();
+            }
+        } catch (err) {
+            alert("캐릭터 정보를 찾을 수 없거나 등록에 실패했습니다.");
+        }
     };
 
-    // 멤버 삭제 (관리자용)
     const handleDeleteMember = async (partyId, slotIndex) => {
         if (!window.confirm("멤버를 해제하시겠습니까?")) return;
         try {
             await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, { withCredentials: true });
             fetchParties();
         } catch (err) { alert("멤버 삭제 실패"); }
-    };
-
-    const getGroupedParties = () => {
-        const currentMain = raidData.find(d => d.id === activeMain);
-        const groups = [];
-
-        currentMain.subCategories.forEach(sub => {
-            sub.difficulties.forEach(diff => {
-                const parties = partyList.filter(p => p.raidName === sub.id && p.difficulty === diff);
-                groups.push({
-                    key: `${sub.id}-${diff}`,
-                    label: `${sub.label} [${diff}]`,
-                    parties: parties
-                });
-            });
-        });
-        return groups;
     };
 
     const getClassIcon = (className) => {
@@ -138,6 +129,22 @@ const RaidPage = ({ user }) => {
             "가디언나이트" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_dragon_knight.png",
         };
         return iconMap[className] || "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_default.png";
+    };
+
+    const getGroupedParties = () => {
+        const currentMain = raidData.find(d => d.id === activeMain);
+        const groups = [];
+        currentMain.subCategories.forEach(sub => {
+            sub.difficulties.forEach(diff => {
+                const parties = partyList.filter(p => p.raidName === sub.id && p.difficulty === diff);
+                groups.push({
+                    key: `${sub.id}-${diff}`,
+                    label: `${sub.label} [${diff}]`,
+                    parties: parties
+                });
+            });
+        });
+        return groups;
     };
 
     return (
@@ -229,11 +236,7 @@ const RaidPage = ({ user }) => {
                                 onChange={(e) => {
                                     const mainId = e.target.value;
                                     const firstSub = raidData.find(r => r.id === mainId).subCategories[0];
-                                    setModalData({
-                                        main: mainId,
-                                        sub: firstSub.id,
-                                        diff: firstSub.difficulties[0]
-                                    });
+                                    setModalData({ main: mainId, sub: firstSub.id, diff: firstSub.difficulties[0] });
                                 }}
                             >
                                 {raidData.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
@@ -246,11 +249,7 @@ const RaidPage = ({ user }) => {
                                     const subId = e.target.value;
                                     const currentMain = raidData.find(r => r.id === modalData.main);
                                     const subObj = currentMain.subCategories.find(s => s.id === subId);
-                                    setModalData({
-                                        ...modalData,
-                                        sub: subId,
-                                        diff: subObj.difficulties[0]
-                                    });
+                                    setModalData({ ...modalData, sub: subId, diff: subObj.difficulties[0] });
                                 }}
                             >
                                 {raidData.find(r => r.id === modalData.main).subCategories.map(s => (
