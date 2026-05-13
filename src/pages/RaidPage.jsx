@@ -193,3 +193,5 @@ const RaidPage = ({ user }) => {
         </div>
     );
 };
+
+export default RaidPage;
