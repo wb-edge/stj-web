@@ -46,8 +46,35 @@ const RaidPage = ({ user }) => {
     const getClassIcon = (className) => {
         // 직접 주신 주소를 건슬링어에 매핑하고 나머지도 비슷한 규칙으로 설정 가능합니다.
         const iconMap = {
+            "디스트로이어" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_destroyer.png",
+            "발키리" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_holyknight_female.png",
+            "버서커" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_berserker.png",
+            "슬레이어" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_berserker_female.png",
+            "워로드" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_warlord.png",
+            "홀리나이트" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_holyknight.png",
+            "기공사" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_force_master.png",
+            "배틀마스터" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_battle_master.png",
+            "브레이커" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_infighter_male.png",
+            "스트라이커" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_battle_master_male.png",
+            "인파이터" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_infighter.png",
+            "창술사" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_lance_master.png",
             "건슬링어": "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_devil_hunter_female.png",
             "데빌헌터": "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_devil_hunter.png",
+            "블래스터" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_blaster.png",
+            "스카우터" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_scouter.png",
+            "호크아이" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_hawk_eye.png",
+            "바드" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_bard.png",
+            "서머너" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_summoner.png",
+            "소서리스" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_elemental_master.png",
+            "아르카나" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_arcana.png",
+            "데모닉" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_demonic.png",
+            "리퍼" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_reaper.png",
+            "블레이드" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_blade.png",
+            "소울이터" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_soul_eater.png",
+            "기상술사" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_weather_artist.png",
+            "도화가" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_yinyangshi.png",
+            "환수사" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_alchemist.png",
+            "가디언나이트" : "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_dragon_knight.png",
             // 다른 클래스들도 패턴에 맞춰 추가 가능합니다.
         };
         return iconMap[className] || "https://cdn-lostark.game.onstove.com/2018/obt/assets/images/common/thumb/emblem_default.png";
