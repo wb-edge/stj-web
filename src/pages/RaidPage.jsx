@@ -76,8 +76,12 @@ const RaidPage = ({ user }) => {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/character/${charName}`, { withCredentials: true });
             
             if (res.data) {
-                const { characterName, characterClass, itemLevel } = res.data;
-                const payload = { characterName, characterClass, itemLevel };
+                const { characterName, characterClassName, itemLevel } = res.data;
+                const payload = { 
+                    characterName, 
+                    characterClass: characterClassName, // 여기서 필드명을 맞춰줌
+                    itemLevel 
+                };
 
                 // 2. 해당 파티 슬롯에 등록
                 await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/raids/party/${partyId}/member/${slotIndex}`, payload, { withCredentials: true });
