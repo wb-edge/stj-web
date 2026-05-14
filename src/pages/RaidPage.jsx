@@ -177,7 +177,6 @@ const RaidPage = ({ user }) => {
                                                     {isAdmin && <button onClick={() => handleDeleteParty(party.id)} className={styles.deletePartyBtn}>삭제</button>}
                                                 </div>
                                             </div>
-                                            {/* 💡 maxSize에 따라 클래스 부여 */}
                                             <div className={party.maxSize === 8 ? styles.memberGrid8 : styles.memberGrid4}>
                                                 {party.members.map((m, idx) => {
                                                     const isSupport = (party.maxSize === 4 && idx === 3) || (party.maxSize === 8 && idx >= 6);
@@ -189,14 +188,14 @@ const RaidPage = ({ user }) => {
                                                         >
                                                             {m.characterName ? (
                                                                 <div className={styles.memberContent}>
-                                                                    <img src={getClassIcon(m.characterClass)} className={styles.classIcon} alt="" />
-                                                                    <div className={styles.memberTextInfo}>
-                                                                        <div className={styles.nameRow}>
-                                                                            <span className={styles.levelTag}>{Math.floor(parseFloat(m.itemLevel?.replace(/,/g, '') || 0))}</span>
-                                                                            <span className={styles.charNameDisplay}>{m.characterName}</span>
-                                                                        </div>
+                                                                    <div className={styles.iconWrapper}>
+                                                                        <img src={getClassIcon(m.characterClass)} className={styles.classIcon} alt="" />
                                                                     </div>
-                                                                    {isAdmin && <button className={styles.deleteMiniBtnCircle} onClick={(e) => { e.stopPropagation(); handleDeleteMember(party.id, idx); }}>×</button>}
+                                                                    <div className={styles.memberTextInfo}>
+                                                                        <span className={styles.levelTag}>{Math.floor(parseFloat(m.itemLevel?.replace(/,/g, '') || 0))}</span>
+                                                                        <span className={styles.charNameDisplay}>{m.characterName}</span>
+                                                                    </div>
+                                                                    {isAdmin && <button className={styles.deleteMemberBtn} onClick={(e) => { e.stopPropagation(); handleDeleteMember(party.id, idx); }}>×</button>}
                                                                 </div>
                                                             ) : <span className={styles.emptyText}>{isAdmin ? '+' : ''}</span>}
                                                         </div>
@@ -218,37 +217,27 @@ const RaidPage = ({ user }) => {
                         <h3>🆕 새 파티 생성</h3>
                         <div className={styles.modalBody}>
                             <label>카테고리</label>
-                            <select 
-                                value={modalData.main} 
-                                onChange={(e) => {
-                                    const mainId = e.target.value;
-                                    const firstSub = raidData.find(r => r.id === mainId).subCategories[0];
-                                    setModalData({ main: mainId, sub: firstSub.id, diff: firstSub.difficulties[0] });
-                                }}
-                            >
+                            <select value={modalData.main} onChange={(e) => {
+                                const mainId = e.target.value;
+                                const firstSub = raidData.find(r => r.id === mainId).subCategories[0];
+                                setModalData({ main: mainId, sub: firstSub.id, diff: firstSub.difficulties[0] });
+                            }}>
                                 {raidData.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
                             </select>
                             <label>레이드명</label>
-                            <select 
-                                value={modalData.sub} 
-                                onChange={(e) => {
-                                    const subId = e.target.value;
-                                    const currentMain = raidData.find(r => r.id === modalData.main);
-                                    const subObj = currentMain.subCategories.find(s => s.id === subId);
-                                    setModalData({ ...modalData, sub: subId, diff: subObj.difficulties[0] });
-                                }}
-                            >
+                            <select value={modalData.sub} onChange={(e) => {
+                                const subId = e.target.value;
+                                const currentMain = raidData.find(r => r.id === modalData.main);
+                                const subObj = currentMain.subCategories.find(s => s.id === subId);
+                                setModalData({ ...modalData, sub: subId, diff: subObj.difficulties[0] });
+                            }}>
                                 {raidData.find(r => r.id === modalData.main).subCategories.map(s => (
                                     <option key={s.id} value={s.id}>{s.label}</option>
                                 ))}
                             </select>
                             <label>난이도</label>
-                            <select 
-                                value={modalData.diff} 
-                                onChange={(e) => setModalData({...modalData, diff: e.target.value})}
-                            >
-                                {raidData.find(r => r.id === modalData.main)
-                                    .subCategories.find(s => s.id === modalData.sub).difficulties.map(d => (
+                            <select value={modalData.diff} onChange={(e) => setModalData({...modalData, diff: e.target.value})}>
+                                {raidData.find(r => r.id === modalData.main).subCategories.find(s => s.id === modalData.sub).difficulties.map(d => (
                                     <option key={d} value={d}>{d}</option>
                                 ))}
                             </select>

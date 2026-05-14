@@ -1,5 +1,5 @@
 .raidContainer {
-    max-width: 1400px; /* PC에서 더 넓게 쓰기 위해 상향 */
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
     color: #333;
@@ -49,7 +49,7 @@
     border-bottom: 3px solid #5865F2;
 }
 
-/* 아코디언 스타일 */
+/* 아코디언 */
 .accordionGroup {
     background: #fff;
     border: 1px solid #e1e1e1;
@@ -70,7 +70,7 @@
 .accordionContent {
     padding: 15px;
     display: flex;
-    flex-direction: column; /* PC에서는 파티 카드를 아래로 하나씩 쌓음 */
+    flex-direction: column;
     gap: 15px;
     background: #f9f9fb;
 }
@@ -81,10 +81,9 @@
     border: 1.5px solid #eee;
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.clearedParty { opacity: 0.6; background-color: #f0f0f0; }
+.clearedParty { opacity: 0.5; background-color: #f4f4f4; }
 
 .partyCardHeader {
     display: flex;
@@ -105,21 +104,12 @@
     background: #fff;
 }
 
-/* 🖥️ PC용 멤버 그리드 (한 줄 레이아웃) */
-.memberGrid4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* PC에서는 4칸 한줄 */
-    gap: 10px;
-}
-
-.memberGrid8 {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr); /* PC에서는 8칸 한줄 */
-    gap: 8px;
-}
+/* 🖥️ PC용 멤버 그리드 */
+.memberGrid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.memberGrid8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
 
 .memberSlot {
-    min-height: 55px;
+    min-height: 58px;
     border: 1px solid #eef;
     border-radius: 6px;
     padding: 8px;
@@ -128,52 +118,59 @@
     background: #fff;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .dealerSlot { border-left: 4px solid #ff4d4f; }
 .supportSlot { border-left: 4px solid #1890ff; }
-.emptySlot { border: 1.5px dashed #ddd; background: #fafafa; }
+.emptySlot { border: 1.5px dashed #ddd; background: #fafafa; justify-content: center; }
 
-.memberContent { display: flex; align-items: center; gap: 8px; width: 100%; }
-.classIcon { width: 32px; height: 32px; border-radius: 4px; }
-.memberTextInfo { display: flex; flex-direction: column; overflow: hidden; }
-.nameRow { display: flex; flex-direction: column; gap: 2px; }
-.levelTag { font-size: 0.7rem; color: #777; font-weight: 700; }
-.charNameDisplay { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.memberContent { display: flex; align-items: center; gap: 10px; width: 100%; position: relative; }
 
-.deleteMiniBtnCircle {
-    position: absolute; top: -5px; right: -5px;
-    width: 18px; height: 18px; background: #ff4d4f; color: white;
-    border: none; border-radius: 50%; font-size: 12px; cursor: pointer;
+/* 💡 아이콘 배경 어둡게 처리 */
+.iconWrapper {
+    background-color: #1a1d23;
+    padding: 2px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 모달 */
-.modalOverlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;
+.classIcon { width: 32px; height: 32px; }
+
+.memberTextInfo { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
+.levelTag { font-size: 0.7rem; color: #777; font-weight: 700; line-height: 1; }
+.charNameDisplay { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+/* 💡 멤버 삭제 버튼 (슬롯 내부 우측 배치) */
+.deleteMemberBtn {
+    background: none;
+    border: none;
+    color: #ff4d4f;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
 }
+
+.deleteMemberBtn:hover { color: #cf1322; }
+
+/* 모달 및 기타 공통 스타일... */
+.modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modalContent { background: white; padding: 25px; border-radius: 12px; width: 400px; }
 .modalBody { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
 .modalActions { display: flex; gap: 10px; }
-.confirmBtn { flex: 1; background: #5865F2; color: white; border: none; padding: 10px; border-radius: 4px; }
-.cancelBtn { flex: 1; background: #eee; border: none; padding: 10px; border-radius: 4px; }
+.confirmBtn { flex: 1; background: #5865F2; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; }
+.cancelBtn { flex: 1; background: #eee; border: none; padding: 10px; border-radius: 4px; cursor: pointer; }
 
-/* 📱 모바일 반응형 디자인 (너비 1024px 이하부터 전환 시작) */
+/* 📱 반응형 */
 @media (max-width: 1024px) {
-    .memberGrid4, .memberGrid8 {
-        grid-template-columns: repeat(2, 1fr); /* 모바일/태블릿에서는 2열 박스형 */
-    }
-    
-    .raidContainer { padding: 10px; }
+    .memberGrid4, .memberGrid8 { grid-template-columns: repeat(2, 1fr); }
     .headerRow { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .accordionContent { padding: 10px; }
-    .charNameDisplay { max-width: 100%; }
     .modalContent { width: 90%; }
 }
 
 @media (max-width: 480px) {
-    .memberGrid4, .memberGrid8 {
-        grid-template-columns: 1fr; /* 아주 작은 화면에선 한줄에 한명씩 */
-    }
+    .memberGrid4, .memberGrid8 { grid-template-columns: 1fr; }
 }
