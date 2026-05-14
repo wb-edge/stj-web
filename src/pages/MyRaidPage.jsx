@@ -22,7 +22,7 @@ const MyRaidPage = ({ user }) => {
     ];
 
     useEffect(() => {
-        if (user?.representativeCharacter) {
+        if (user?.mainCharacterName) {
             fetchMyData();
         }
     }, [user]);
@@ -31,7 +31,7 @@ const MyRaidPage = ({ user }) => {
         setIsLoading(true);
         try {
             // 1. 내 원정대 캐릭터 리스트업 (대표캐릭터 기준)
-            const charRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/characters/${user.representativeCharacter}`, { withCredentials: true });
+            const charRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/lostark/characters/${user.mainCharacterName}`, { withCredentials: true });
             const charNames = Array.isArray(charRes.data) ? charRes.data.map(c => c.characterName) : [];
             setMyCharacters(charNames);
 
