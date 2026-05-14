@@ -56,19 +56,21 @@ function App() {
         window.location.href = `${import.meta.env.VITE_API_URL}/logout`;
     };
 
-    // ✅ 2. Route 설정에서 직접 컴포넌트에 user 전달
     const routeConfig = [
         { path: "/", label: "홈", showInNav: true, element: <HomeContent user={user} /> },
         { path: "/raid", label: "레이드 일정", showInNav: true, element: <RaidPage user={user} /> },
-        /*
+        
+        // 💡 로그인한 경우(user.success)에만 네비게이션에 노출
         { 
             path: "/my-raid", 
             label: "내 레이드", 
-            showInNav: true,
-            element: <MyRaidPage user={user} /> 
+            showInNav: !!(user && user.success), // user가 있고 success가 true일 때만 true
+            element: user && user.success ? <MyRaidPage user={user} /> : <HomeContent user={user} />
         },
-        { path: "/characters", label: "보유 캐릭터", showInNav: true, element: <div>준비 중</div> },
-        */
+        
+        /* 보유 캐릭터는 아직 준비 중이므로 주석 유지 혹은 필요시 위와 동일하게 설정 */
+        // { path: "/characters", label: "보유 캐릭터", showInNav: !!(user && user.success), element: <div>준비 중</div> },
+        
         { 
             path: "/admin", 
             label: "관리자 페이지", 
